@@ -1,4 +1,3 @@
-
 <?php
 include("conexion.php");
 
@@ -62,76 +61,214 @@ $resultado = $conexion->query("SELECT n.*, e.nombre AS estudiante, m.nombre AS m
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="estilos.css">
-    <title>Notas</title>
+    <title>Dashboard de Gestión de Notas</title>
+    <style>
+        * {margin:0; padding:0; box-sizing:border-box;}
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            display: flex;
+        }
+
+        /* Sidebar */
+        nav {
+            width: 240px;
+            background: rgba(20,20,30,0.95);
+            height: 100vh;
+            padding-top: 60px;
+            position: fixed;
+            left: 0;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+        }
+        nav a {
+            display:block;
+            padding:15px 25px;
+            color:#fff;
+            text-decoration:none;
+            font-weight:500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        nav a:hover {
+            background: linear-gradient(90deg, #1a2a6c, #02cdfa6f);
+            transform: translateX(5px);
+            border-left: 4px solid #fff;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            left: 240px;
+            top: 0;
+            width: calc(100% - 240px);
+            padding: 20px;
+            background: linear-gradient(90deg, #1a2a6c, #0086ecff);
+            font-size: 1.8em;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        /* Main */
+        main {
+            margin-left: 240px;
+            margin-top: 80px;
+            padding: 30px;
+            flex:1;
+        }
+
+        /* Tarjetas */
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+        }
+        .card h2 {
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            color: #00eaff;
+        }
+
+        /* Formulario */
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+        form input, form select, form button {
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        form input, form select {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            color:#fff;
+        }
+        form button {
+            background: #0086ec;
+            color:#fff;
+            cursor:pointer;
+            transition: background 0.3s;
+        }
+        form button:hover {
+            background:#00bfff;
+        }
+
+        /* Tabla */
+        table {
+            width:100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius:12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+        th, td {
+            padding:12px;
+            text-align:left;
+        }
+        th {
+            background-color: rgba(0, 234, 255,0.8);
+            color:#000;
+        }
+        tr:nth-child(even){background: rgba(255,255,255,0.05);}
+        td a {
+            text-decoration:none;
+            padding:6px 12px;
+            border-radius:6px;
+            margin-right:5px;
+            font-size:0.9em;
+            color:#fff;
+        }
+        td a.edit {background:#27ae60;}
+        td a.edit:hover {background:#1e8449;}
+        td a.delete {background:#e74c3c;}
+        td a.delete:hover {background:#c0392b;}
+    </style>
 </head>
 <body>
-<h2>Gestión de Notas</h2>
+    <nav>
+        <a href="panel_admin.php">Volver al panel Principal</a>
+        <a href="login.php">Cerrar Sesión</a>
+    </nav>
 
-<form method="post">
-    <input type="hidden" name="id" value="<?=isset($editar)?$editar['id']:'' ?>">
+    <header>Dashboard de Gestión de Notas</header>
 
-    Inscripción:
-    <select name="id_inscripcion">
-        <option value="">--Seleccionar--</option>
-        <?php
-        $inscripciones = $conexion->query("SELECT i.id, e.nombre AS estudiante, m.nombre AS materia
-                                           FROM inscripciones i
-                                           LEFT JOIN estudiantes e ON i.id_estudiante=e.id
-                                           LEFT JOIN cursos c ON i.id_curso=c.id
-                                           LEFT JOIN materias m ON c.id_materia=m.id");
-        while($fila = $inscripciones->fetch_assoc()):
-        ?>
-            <option value="<?= $fila['id'] ?>" <?=isset($editar) && $editar['id_inscripcion']==$fila['id']?'selected':''?>><?= $fila['estudiante'].' - '.$fila['materia'] ?></option>
-        <?php endwhile; ?>
-    </select><br>
+    <main>
+        <div class="card">
+            <h2>➕ <?= isset($editar) ? "Editar Nota" : "Agregar Nota" ?></h2>
+            <form method="post">
+                <input type="hidden" name="id" value="<?= isset($editar)?$editar['id']:'' ?>">
 
-    Zona: <input type="number" step="0.01" name="zona" value="<?=isset($editar)?$editar['zona']:0?>"><br>
-    Fase 1: <input type="number" step="0.01" name="fase_1" value="<?=isset($editar)?$editar['fase_1']:0?>"><br>
-    Fase 2: <input type="number" step="0.01" name="fase_2" value="<?=isset($editar)?$editar['fase_2']:0?>"><br>
-    Fase Final: <input type="number" step="0.01" name="fase_final" value="<?=isset($editar)?$editar['fase_final']:0?>"><br>
-    Observaciones: <input type="text" name="observaciones" value="<?=isset($editar)?$editar['observaciones']:''?>"><br><br>
+                <select name="id_inscripcion" required>
+                    <option value="">--Seleccionar Inscripción--</option>
+                    <?php
+                    $inscripciones = $conexion->query("SELECT i.id, e.nombre AS estudiante, m.nombre AS materia
+                                                       FROM inscripciones i
+                                                       LEFT JOIN estudiantes e ON i.id_estudiante=e.id
+                                                       LEFT JOIN cursos c ON i.id_curso=c.id
+                                                       LEFT JOIN materias m ON c.id_materia=m.id");
+                    while($fila = $inscripciones->fetch_assoc()):
+                    ?>
+                        <option value="<?= $fila['id'] ?>" <?=isset($editar) && $editar['id_inscripcion']==$fila['id']?'selected':''?>>
+                            <?= $fila['estudiante'].' - '.$fila['materia'] ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
 
-    <?php if(isset($editar)): ?>
-        <input type="submit" name="actualizar" value="Actualizar">
-        <a href="notas.php">Cancelar</a>
-    <?php else: ?>
-        <input type="submit" name="guardar" value="Guardar">
-    <?php endif; ?>
-</form>
+                <input type="number" step="0.01" name="zona" value="<?= isset($editar)?$editar['zona']:0 ?>" placeholder="Zona">
+                <input type="number" step="0.01" name="fase_1" value="<?= isset($editar)?$editar['fase_1']:0 ?>" placeholder="Fase 1">
+                <input type="number" step="0.01" name="fase_2" value="<?= isset($editar)?$editar['fase_2']:0 ?>" placeholder="Fase 2">
+                <input type="number" step="0.01" name="fase_final" value="<?= isset($editar)?$editar['fase_final']:0 ?>" placeholder="Fase Final">
+                <input type="text" name="observaciones" value="<?= isset($editar)?$editar['observaciones']:'' ?>" placeholder="Observaciones">
 
-<hr>
+                <button type="submit" name="<?= isset($editar)?'actualizar':'guardar' ?>">
+                    <?= isset($editar)?'Actualizar':'Guardar' ?>
+                </button>
+            </form>
+        </div>
 
-<table border="1">
-<tr>
-    <th>ID</th>
-    <th>Estudiante</th>
-    <th>Materia</th>
-    <th>Zona</th>
-    <th>Fase 1</th>
-    <th>Fase 2</th>
-    <th>Fase Final</th>
-    <th>Nota Final</th>
-    <th>Observaciones</th>
-    <th>Acciones</th>
-</tr>
-<?php while($fila = $resultado->fetch_assoc()): ?>
-<tr>
-    <td><?= $fila['id'] ?></td>
-    <td><?= $fila['estudiante'] ?></td>
-    <td><?= $fila['materia'] ?></td>
-    <td><?= $fila['zona'] ?></td>
-    <td><?= $fila['fase_1'] ?></td>
-    <td><?= $fila['fase_2'] ?></td>
-    <td><?= $fila['fase_final'] ?></td>
-    <td><?= $fila['nota_final'] ?></td>
-    <td><?= $fila['observaciones'] ?></td>
-    <td>
-        <a href="?editar=<?= $fila['id'] ?>">Editar</a>
-        <a href="?eliminar=<?= $fila['id'] ?>" onclick="return confirm('¿Eliminar nota?')">Eliminar</a>
-    </td>
-</tr>
-<?php endwhile; ?>
-</table>
+        <div class="card">
+            <h2>📋 Lista de Notas</h2>
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Estudiante</th>
+                    <th>Materia</th>
+                    <th>Zona</th>
+                    <th>Fase 1</th>
+                    <th>Fase 2</th>
+                    <th>Fase Final</th>
+                    <th>Nota Final</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+                <?php while($fila = $resultado->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $fila['id'] ?></td>
+                    <td><?= $fila['estudiante'] ?></td>
+                    <td><?= $fila['materia'] ?></td>
+                    <td><?= $fila['zona'] ?></td>
+                    <td><?= $fila['fase_1'] ?></td>
+                    <td><?= $fila['fase_2'] ?></td>
+                    <td><?= $fila['fase_final'] ?></td>
+                    <td><?= $fila['nota_final'] ?></td>
+                    <td><?= $fila['observaciones'] ?></td>
+                    <td>
+                        <a href="?editar=<?= $fila['id'] ?>" class="edit">Editar</a>
+                        <a href="?eliminar=<?= $fila['id'] ?>" class="delete" onclick="return confirm('¿Eliminar nota?')">Eliminar</a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </table>
+        </div>
+    </main>
 </body>
 </html>
