@@ -32,40 +32,6 @@ if (isset($_GET['logout'])) {
     exit();
 }
 
-// Manejar reinicio de 2FA
-if (isset($_POST['reset_2fa'])) {
-    $tipo_usuario = $_POST['tipo_usuario'];
-    $usuario_id = $_POST['usuario_id'];
-    
-    if (resetTwoFactorAuth($conexion, $tipo_usuario, $usuario_id)) {
-        $_SESSION['mensaje'] = "✅ QR de Google Authenticator reiniciado correctamente";
-        $_SESSION['tipo_mensaje'] = "success";
-    } else {
-        $_SESSION['mensaje'] = "❌ Error al reiniciar el QR de Google Authenticator";
-        $_SESSION['tipo_mensaje'] = "error";
-    }
-    
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit();
-}
-
-// Función para reiniciar 2FA
-function resetTwoFactorAuth($conexion, $tipo_usuario, $usuario_id) {
-    $tabla = ($tipo_usuario == 'administrador') ? 'administradores' : 'catedraticos';
-    $sql = "UPDATE $tabla SET secret_2fa = NULL WHERE id = ?";
-    
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $usuario_id);
-    
-    if ($stmt->execute()) {
-        $stmt->close();
-        return true;
-    }
-    
-    $stmt->close();
-    return false;
-}
-
 // Obtener información del sistema para el dashboard
 $total_estudiantes = 0;
 $total_catedraticos = 0;
@@ -113,26 +79,6 @@ try {
     error_log("Error en consultas: " . $e->getMessage());
 }
 
-// Obtener administradores y catedráticos para el modal
-$administradores = [];
-$catedraticos = [];
-
-$sql_admins = "SELECT id, nombre, apellido, correo FROM administradores";
-if ($result = $conexion->query($sql_admins)) {
-    while ($row = $result->fetch_assoc()) {
-        $administradores[] = $row;
-    }
-    $result->free();
-}
-
-$sql_catedraticos = "SELECT id, nombre, apellido, correo FROM catedraticos";
-if ($result = $conexion->query($sql_catedraticos)) {
-    while ($row = $result->fetch_assoc()) {
-        $catedraticos[] = $row;
-    }
-    $result->free();
-}
-
 // Obtener fecha y hora actual
 $fecha_actual = date('d/m/Y');
 $hora_actual = date('H:i');
@@ -143,15 +89,15 @@ $hora_actual = date('H:i');
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel Principal - Gestión del Colegio</title>
+<title>Panel Principal - Gestión de Notas</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 :root {
-    --primary: #1a2a6c;
-    --secondary: #00d6fc;
-    --accent: #00eeff;
-    --dark: #0f2027;
-    --darker: #0a1a20;
+    --primary: #1e3c72;
+    --secondary: #2a5298;
+    --accent: #3a6fd9;
+    --dark: #1e3c72;
+    --darker: #162b5a;
     --light: rgba(255,255,255,0.1);
     --lighter: rgba(255,255,255,0.05);
 }
@@ -164,7 +110,7 @@ $hora_actual = date('H:i');
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, var(--dark), #203a43, #2c5364);
+    background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
     color: #fff;
     min-height: 100vh;
     line-height: 1.6;
@@ -175,7 +121,7 @@ body {
 .header-main {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     padding: 20px;
-    box-shadow: 0 4px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.3);
     position: relative;
     overflow: hidden;
 }
@@ -208,11 +154,13 @@ body {
     font-size: 2em;
     font-weight: 700;
     margin-bottom: 5px;
+    color: #ffffff;
 }
 
 .header-text p {
     opacity: 0.9;
     font-size: 0.9em;
+    color: #e0f0ff;
 }
 
 .user-section {
@@ -228,11 +176,13 @@ body {
 .user-name {
     font-weight: 600;
     font-size: 1.1em;
+    color: #ffffff;
 }
 
 .user-role {
     opacity: 0.8;
     font-size: 0.9em;
+    color: #e0f0ff;
 }
 
 .logout-btn {
@@ -264,13 +214,13 @@ body {
 }
 
 .welcome-banner {
-    background: linear-gradient(135deg, var(--lighter), var(--light));
+    background: rgba(255,255,255,0.15);
     border-radius: 20px;
     padding: 30px;
     margin-bottom: 30px;
     text-align: center;
     backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
     position: relative;
     overflow: hidden;
 }
@@ -281,14 +231,14 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    height: 4px;
+    background: linear-gradient(90deg, #ffffff, #a8c6ff, #ffffff);
 }
 
 .welcome-banner h2 {
     font-size: 2.2em;
     margin-bottom: 10px;
-    background: linear-gradient(90deg, var(--secondary), #ffffff);
+    background: linear-gradient(90deg, #ffffff, #e0f0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -300,6 +250,7 @@ body {
     gap: 20px;
     margin-top: 15px;
     opacity: 0.9;
+    color: #e0f0ff;
 }
 
 /* Stats mejoradas */
@@ -311,8 +262,8 @@ body {
 }
 
 .stat-card {
-    background: var(--lighter);
-    border: 1px solid var(--light);
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
     border-radius: 16px;
     padding: 30px;
     text-align: center;
@@ -329,25 +280,26 @@ body {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary), var(--accent));
+    background: linear-gradient(90deg, #ffffff, #a8c6ff);
 }
 
 .stat-card:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    border-color: var(--accent);
+    border-color: #ffffff;
 }
 
 .stat-icon {
     font-size: 3em;
     margin-bottom: 15px;
     opacity: 0.9;
+    color: #ffffff;
 }
 
 .stat-number {
     font-size: 3.5em;
     font-weight: 800;
-    background: linear-gradient(135deg, var(--secondary), var(--accent));
+    background: linear-gradient(135deg, #ffffff, #e0f0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -359,6 +311,7 @@ body {
     font-size: 1.2em;
     opacity: 0.9;
     font-weight: 500;
+    color: #e0f0ff;
 }
 
 /* Navigation mejorada */
@@ -370,7 +323,7 @@ body {
     font-size: 1.8em;
     margin-bottom: 25px;
     text-align: center;
-    background: linear-gradient(90deg, var(--secondary), #ffffff);
+    background: linear-gradient(90deg, #ffffff, #e0f0ff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -386,8 +339,8 @@ body {
     display: flex;
     align-items: center;
     padding: 25px;
-    background: var(--lighter);
-    border: 1px solid var(--light);
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
     border-radius: 15px;
     text-decoration: none;
     color: #fff;
@@ -405,14 +358,14 @@ body {
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(180deg, var(--primary), var(--accent));
+    background: linear-gradient(180deg, #ffffff, #a8c6ff);
     transition: width 0.3s ease;
 }
 
 .nav-card:hover {
     transform: translateX(10px) translateY(-5px);
-    background: linear-gradient(135deg, var(--primary), transparent);
-    border-color: var(--accent);
+    background: rgba(255,255,255,0.2);
+    border-color: #ffffff;
     box-shadow: 0 15px 30px rgba(0,0,0,0.3);
 }
 
@@ -427,14 +380,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.2);
     border-radius: 12px;
     transition: all 0.3s ease;
+    color: #ffffff;
 }
 
 .nav-card:hover .nav-icon {
     transform: scale(1.1);
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.3);
 }
 
 .nav-content {
@@ -445,185 +399,13 @@ body {
     font-size: 1.3em;
     font-weight: 600;
     margin-bottom: 5px;
+    color: #ffffff;
 }
 
 .nav-desc {
     opacity: 0.8;
     font-size: 0.9em;
-}
-
-/* Quick Actions */
-.quick-actions {
-    background: var(--lighter);
-    border-radius: 20px;
-    padding: 30px;
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--light);
-}
-
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-}
-
-.action-btn {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border: none;
-    color: white;
-    padding: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-}
-
-/* Footer mejorado */
-.footer-main {
-    background: var(--darker);
-    padding: 30px 20px;
-    margin-top: 50px;
-    border-top: 1px solid var(--light);
-}
-
-.footer-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    text-align: center;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-}
-
-.footer-link {
-    color: var(--accent);
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-}
-
-.footer-link:hover {
-    opacity: 0.8;
-}
-
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.7);
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background: linear-gradient(135deg, var(--dark), #203a43);
-    margin: 5% auto;
-    padding: 0;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-    border: 1px solid var(--light);
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from { transform: translateY(-50px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.modal-header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    padding: 20px;
-    border-radius: 20px 20px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 1.4em;
-}
-
-.close-modal {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 1.5em;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 5px;
-    transition: background 0.3s ease;
-}
-
-.close-modal:hover {
-    background: rgba(255,255,255,0.2);
-}
-
-.modal-body {
-    padding: 25px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
-
-.form-select, .form-input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid var(--light);
-    background: rgba(255,255,255,0.05);
-    color: white;
-    font-size: 1em;
-    backdrop-filter: blur(10px);
-}
-
-.form-select:focus, .form-input:focus {
-    outline: none;
-    border-color: var(--accent);
-    background: rgba(255,255,255,0.1);
-}
-
-.submit-btn {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    border: none;
-    color: white;
-    padding: 15px 25px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 500;
-    width: 100%;
-    transition: all 0.3s ease;
-}
-
-.submit-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    color: #e0f0ff;
 }
 
 /* Alert Messages */
@@ -632,19 +414,19 @@ body {
     border-radius: 10px;
     margin-bottom: 20px;
     backdrop-filter: blur(10px);
-    border: 1px solid;
+    border: 2px solid;
 }
 
 .alert-success {
-    background: rgba(76, 175, 80, 0.2);
-    border-color: #4CAF50;
-    color: #a5d6a7;
+    background: rgba(255,255,255,0.2);
+    border-color: #ffffff;
+    color: #ffffff;
 }
 
 .alert-error {
-    background: rgba(244, 67, 54, 0.2);
-    border-color: #f44336;
-    color: #ef9a9a;
+    background: rgba(255,255,255,0.2);
+    border-color: #ff6b6b;
+    color: #ff6b6b;
 }
 
 /* Responsive */
@@ -678,11 +460,6 @@ body {
     
     .welcome-banner h2 {
         font-size: 1.8em;
-    }
-    
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
     }
 }
 
@@ -788,38 +565,17 @@ body {
 
     <section class="welcome-banner fade-in">
         <h2>Bienvenido, <?php echo explode(' ', $_SESSION['usuario']['nombre'])[0]; ?>! </h2>
-        <p>Panel de control del sistema académico - Regional Sede Mixco 2</p>
-        
+        <p>Panel de control del sistema académico - Regional Sede Mixco </p>
+        <div class="time-info">
+            <span><i class="fas fa-calendar"></i> <?php echo $fecha_actual; ?></span>
+            
+        </div>
     </section>
 
-    <section class="stats-grid">
-        <div class="stat-card fade-in" style="animation-delay: 0.1s">
-            <div class="stat-icon">👨‍🎓</div>
-            <div class="stat-number" id="count-estudiantes">0</div>
-            <div class="stat-label">Estudiantes Registrados</div>
-        </div>
-        
-        <div class="stat-card fade-in" style="animation-delay: 0.2s">
-            <div class="stat-icon">👨‍🏫</div>
-            <div class="stat-number" id="count-catedraticos">0</div>
-            <div class="stat-label">Catedráticos</div>
-        </div>
-        
-        <div class="stat-card fade-in" style="animation-delay: 0.3s">
-            <div class="stat-icon">📚</div>
-            <div class="stat-number" id="count-materias">0</div>
-            <div class="stat-label">Materias</div>
-        </div>
-        
-        <div class="stat-card fade-in" style="animation-delay: 0.4s">
-            <div class="stat-icon">📝</div>
-            <div class="stat-number" id="count-inscripciones">0</div>
-            <div class="stat-label">Inscripciones</div>
-        </div>
-    </section>
+    
 
     <section class="navigation-section">
-        <h2 class="section-title">Módulos del Sistema de Notas</h2>
+        <h2 class="section-title">Módulos del Sistema</h2>
         <div class="nav-grid">
             <?php
             $modules = [
@@ -850,61 +606,9 @@ body {
             ?>
         </div>
     </section>
-
-    <section class="quick-actions fade-in" style="animation-delay: 0.8s">
-        <h2 class="section-title">Reiniciar QR </h2>
-        <div class="actions-grid">
-         
-            <button class="action-btn" onclick="openReset2FAModal()">
-                <i class="fas fa-qrcode"></i> Reiniciar QR 2FA
-            </button>
-        </div>
-    </section>
 </main>
 
-<!-- Modal para reiniciar QR 2FA -->
-<div id="reset2FAModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3><i class="fas fa-qrcode"></i> Reiniciar QR Google Authenticator</h3>
-            <button class="close-modal" onclick="closeReset2FAModal()">&times;</button>
-        </div>
-        <div class="modal-body">
-            <form method="POST" action="">
-                <div class="form-group">
-                    <label for="tipo_usuario">Tipo de Usuario:</label>
-                    <select id="tipo_usuario" name="tipo_usuario" class="form-select" onchange="updateUserList()" required>
-                        <option value="">Seleccionar tipo</option>
-                        <option value="administrador">Administrador</option>
-                        <option value="catedratico">Catedrático</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="usuario_id">Usuario:</label>
-                    <select id="usuario_id" name="usuario_id" class="form-select" required>
-                        <option value="">Seleccionar usuario</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <button type="submit" name="reset_2fa" class="submit-btn">
-                        <i class="fas fa-sync-alt"></i> Reiniciar QR
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
 <script>
-// Datos de usuarios para el modal
-const usuarios = {
-    administrador: <?php echo json_encode($administradores); ?>,
-    catedratico: <?php echo json_encode($catedraticos); ?>
-};
-
 // Animación de contadores
 function animateCounter(element, target) {
     let current = 0;
@@ -917,43 +621,6 @@ function animateCounter(element, target) {
         }
         element.textContent = Math.floor(current);
     }, 40);
-}
-
-// Actualizar lista de usuarios en el modal
-function updateUserList() {
-    const tipo = document.getElementById('tipo_usuario').value;
-    const usuarioSelect = document.getElementById('usuario_id');
-    
-    usuarioSelect.innerHTML = '<option value="">Seleccionar usuario</option>';
-    
-    if (tipo && usuarios[tipo]) {
-        usuarios[tipo].forEach(usuario => {
-            const option = document.createElement('option');
-            option.value = usuario.id;
-            option.textContent = `${usuario.nombre} ${usuario.apellido} (${usuario.correo})`;
-            usuarioSelect.appendChild(option);
-        });
-    }
-}
-
-// Modal functions
-function openReset2FAModal() {
-    document.getElementById('reset2FAModal').style.display = 'block';
-}
-
-function closeReset2FAModal() {
-    document.getElementById('reset2FAModal').style.display = 'none';
-    // Reset form
-    document.getElementById('tipo_usuario').value = '';
-    document.getElementById('usuario_id').innerHTML = '<option value="">Seleccionar usuario</option>';
-}
-
-// Cerrar modal al hacer click fuera
-window.onclick = function(event) {
-    const modal = document.getElementById('reset2FAModal');
-    if (event.target === modal) {
-        closeReset2FAModal();
-    }
 }
 
 // Inicializar contadores después de cargar la página

@@ -49,35 +49,99 @@ if (count($notas) > 0) {
 <title>Mis Notas - Estudiante</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { display: flex; min-height: 100vh; margin: 0; background-color: #f8f9fa; }
+    body { 
+        display: flex; 
+        min-height: 100vh; 
+        margin: 0; 
+        background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
+        font-family: 'Segoe UI', sans-serif;
+    }
     .sidebar {
         width: 240px;
-        background: #343a40;
+        background: #1e3c72;
         color: #fff;
         flex-shrink: 0;
+        border-right: 3px solid #ffffff;
     }
     .sidebar a {
         color: #fff;
         text-decoration: none;
         display: block;
         padding: 12px 15px;
-        border-radius: 5px;
+        margin: 8px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
     }
-    .sidebar a:hover { background: #495057; }
-    .content { flex: 1; padding: 30px; }
+    .sidebar a:hover { 
+        background: #ffffff;
+        color: #1e3c72;
+        transform: translateX(5px);
+    }
+    .content { 
+        flex: 1; 
+        padding: 30px;
+        background: #ffffff;
+        margin: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
     .card {
-        border-radius: 12px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        border: 2px solid #1e3c72;
+        overflow: hidden;
     }
-    .table thead { background: #007bff; color: white; }
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .table thead { 
+        background: #1e3c72; 
+        color: white; 
+    }
+    .table th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+    }
+    .table td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #dee2e6;
+    }
+    h2, h4, h5 {
+        color: #1e3c72;
+        font-weight: 700;
+    }
+    .sidebar h5 {
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .alert-warning {
+        background: #fff3cd;
+        border: 1px solid #1e3c72;
+        color: #1e3c72;
+        border-radius: 8px;
+    }
+    .text-primary {
+        color: #1e3c72 !important;
+    }
+    .display-5 {
+        color: #1e3c72;
+        font-weight: 700;
+    }
 </style>
 </head>
 <body>
 
 <!-- ======== SIDEBAR ======== -->
 <div class="sidebar p-3 d-flex flex-column">
-    <h5 class="text-center mb-3"> <?= htmlspecialchars($nombre_estudiante) ?></h5>
-    <hr>
+    <h5 class="text-center mb-3"><?= htmlspecialchars($nombre_estudiante) ?></h5>
+    <hr style="border-color: #ffffff;">
     <a href="panel_estudiante.php">Volver a Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
 </div>
@@ -85,38 +149,40 @@ if (count($notas) > 0) {
 <!-- ======== CONTENIDO PRINCIPAL ======== -->
 <div class="content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-primary">Mis Notas</h2>
+        <h2 class="fw-bold">Mis Notas</h2>
         <span class="text-secondary">Consulta tus calificaciones y tu promedio general</span>
     </div>
 
     <div class="card p-4 mb-4 text-center">
-        <h4 class="text-primary mb-2">Promedio General</h4>
+        <h4 class="mb-2">Promedio General</h4>
         <h1 class="fw-bold display-5"><?= number_format($promedio, 2) ?></h1>
     </div>
 
     <div class="card p-4">
-        <h4 class="mb-3 text-primary">Calificaciones por Materia y Semestre</h4>
+        <h4 class="mb-3">Calificaciones por Materia y Semestre</h4>
         <?php if (count($notas) > 0): ?>
-            <table class="table table-bordered table-hover text-center">
-                <thead>
-                    <tr>
-                        <th>Materia</th>
-                        <th>Semestre</th>
-                        <th>Nota Final</th>
-                        <th>Observaciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($notas as $n): ?>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover text-center">
+                    <thead>
                         <tr>
-                            <td><?= htmlspecialchars($n['materia']) ?></td>
-                            <td><?= htmlspecialchars($n['semestre']) ?></td>
-                            <td><?= htmlspecialchars($n['nota_final']) ?></td>
-                            <td><?= htmlspecialchars($n['observaciones']) ?></td>
+                            <th>Materia</th>
+                            <th>Semestre</th>
+                            <th>Nota Final</th>
+                            <th>Observaciones</th>
                         </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($notas as $n): ?>
+                            <tr>
+                                <td class="fw-bold"><?= htmlspecialchars($n['materia']) ?></td>
+                                <td><?= htmlspecialchars($n['semestre']) ?></td>
+                                <td><?= htmlspecialchars($n['nota_final']) ?></td>
+                                <td><?= htmlspecialchars($n['observaciones']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php else: ?>
             <div class="alert alert-warning text-center">
                 No se encontraron calificaciones registradas.

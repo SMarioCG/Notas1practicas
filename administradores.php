@@ -54,15 +54,22 @@ $resultado = $conexion->query("SELECT * FROM administradores");
 <title>Dashboard Administradores</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',sans-serif;background:#121212;color:#fff;display:flex;}
+body{
+    font-family:'Segoe UI',sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
+    color:#fff;
+    display:flex;
+    min-height:100vh;
+}
 
 /* Sidebar */
 nav{
     width:240px;
-    background:#1c1c1c;
+    background:#1e3c72;
     height:100vh;
     padding-top:60px;
     position:fixed;
+    border-right: 3px solid #ffffff;
 }
 nav a{
     display:block;
@@ -71,10 +78,15 @@ nav a{
     text-decoration:none;
     border-left:4px solid transparent;
     transition:0.3s;
+    margin: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
 }
 nav a:hover{
-    background:#272727;
-    border-left:4px solid #00bfff;
+    background:#ffffff;
+    color:#1e3c72;
+    border-left:4px solid #1e3c72;
+    transform: translateX(5px);
 }
 
 /* Header */
@@ -84,10 +96,12 @@ header{
     top:0;
     width:calc(100% - 240px);
     padding:20px;
-    background:#1a73e8;
+    background:#1e3c72;
     font-size:1.8em;
     font-weight:bold;
     box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    color: #ffffff;
+    border-bottom: 3px solid #ffffff;
 }
 
 /* Main */
@@ -100,35 +114,151 @@ main{
 
 /* Card */
 .card{
-    background: #222;
+    background: #ffffff;
     padding:25px;
     border-radius:12px;
     margin-bottom:20px;
+    border: 2px solid #1e3c72;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 .card h2{
     margin-bottom:15px;
-    color:#00eaff;
+    color:#1e3c72;
 }
 
 /* Form */
-form{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
-form input, form button{padding:8px;border-radius:8px;border:none;outline:none;}
-form input{flex:1;background:#333;color:#fff;}
-form button{background:#1a73e8;color:#fff;cursor:pointer;transition:0.3s;}
-form button:hover{background:#00bfff;}
+form{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+}
+form input, form button{
+    padding:12px;
+    border-radius:8px;
+    border:none;
+    outline:none;
+    font-size: 1em;
+}
+form input{
+    flex:1;
+    background:#f8f9fa;
+    color:#333;
+    border: 2px solid #1e3c72;
+}
+form input:focus{
+    border-color: #3a6fd9;
+    background: #ffffff;
+}
+form button{
+    background:#1e3c72;
+    color:#fff;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight: 600;
+    border: 2px solid #1e3c72;
+}
+form button:hover{
+    background:#3a6fd9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+}
 
 /* Tabla */
-table{width:100%;border-collapse:collapse;margin-top:20px;background:#222;border-radius:12px;overflow:hidden;}
-th,td{padding:12px;text-align:left;}
-th{background:#00eaff;color:#000;}
-tr:nth-child(even){background:#2a2a2a;}
-td a{
-    text-decoration:none;padding:6px 12px;border-radius:6px;margin-right:5px;font-size:0.9em;color:#fff;
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    background:#ffffff;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border: 2px solid #1e3c72;
 }
-td a.edit{background:#27ae60;}
-td a.edit:hover{background:#1e8449;}
-td a.delete{background:#e74c3c;}
-td a.delete:hover{background:#c0392b;}
+th,td{
+    padding:15px;
+    text-align:left;
+    border-bottom: 1px solid #dee2e6;
+}
+th{
+    background:#1e3c72;
+    color:#ffffff;
+    font-weight: 600;
+}
+tr:nth-child(even){
+    background:#f8f9fa;
+}
+td{
+    color: #333;
+}
+td a{
+    text-decoration:none;
+    padding:8px 15px;
+    border-radius:6px;
+    margin-right:5px;
+    font-size:0.9em;
+    color:#fff;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+td a.edit{
+    background:#1e3c72;
+    border: 1px solid #1e3c72;
+}
+td a.edit:hover{
+    background:#3a6fd9;
+    transform: translateY(-2px);
+}
+td a.delete{
+    background:#dc3545;
+    border: 1px solid #dc3545;
+}
+td a.delete:hover{
+    background:#c82333;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav {
+        width: 200px;
+    }
+    header {
+        left: 200px;
+        width: calc(100% - 200px);
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    main {
+        margin-left: 200px;
+        padding: 20px;
+    }
+    form {
+        flex-direction: column;
+    }
+    form input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 20px;
+    }
+    header {
+        position: relative;
+        left: 0;
+        width: 100%;
+        margin-top: 0;
+    }
+    main {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+}
 </style>
 </head>
 <body>
@@ -155,7 +285,7 @@ td a.delete:hover{background:#c0392b;}
     </div>
 
     <div class="card">
-        <h2>📋 Lista de Administradores</h2>
+        <h2> Lista de Administradores</h2>
         <table>
             <tr>
                 <th>ID</th>

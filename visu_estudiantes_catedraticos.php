@@ -23,21 +23,117 @@ $curso_seleccionado = isset($_GET['curso_id']) ? $_GET['curso_id'] : null;
 <title>Estudiantes - Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { display: flex; min-height: 100vh; margin: 0; }
-    .sidebar { width: 220px; background: #343a40; color: #fff; }
-    .sidebar a { color: #fff; text-decoration: none; display: block; padding: 12px 15px; }
-    .sidebar a:hover { background: #495057; }
-    .content { flex: 1; padding: 20px; }
-    .table thead { background-color: #007bff; color: #fff; }
-    .curso-btn { margin: 5px; }
+    body { 
+        display: flex; 
+        min-height: 100vh; 
+        margin: 0; 
+        background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .sidebar { 
+        width: 220px; 
+        background: #1e3c72; 
+        color: #fff;
+        border-right: 3px solid #ffffff;
+    }
+    .sidebar a { 
+        color: #fff; 
+        text-decoration: none; 
+        display: block; 
+        padding: 12px 15px; 
+        margin: 5px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.1);
+        transition: all 0.3s;
+    }
+    .sidebar a:hover { 
+        background: #ffffff;
+        color: #1e3c72;
+        transform: translateX(5px);
+    }
+    .content { 
+        flex: 1; 
+        padding: 30px;
+        background: #ffffff;
+        margin: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h2, h4 {
+        color: #1e3c72;
+        font-weight: 700;
+    }
+    .sidebar h4 {
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .curso-btn {
+        margin: 5px;
+        border: 2px solid #1e3c72;
+        border-radius: 8px;
+        padding: 10px 15px;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .btn-primary {
+        background: #1e3c72;
+        border-color: #1e3c72;
+        color: white;
+    }
+    .btn-primary:hover {
+        background: #3a6fd9;
+        border-color: #3a6fd9;
+        transform: translateY(-2px);
+    }
+    .btn-outline-primary {
+        background: white;
+        border-color: #1e3c72;
+        color: #1e3c72;
+    }
+    .btn-outline-primary:hover {
+        background: #1e3c72;
+        color: white;
+        transform: translateY(-2px);
+    }
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .table thead {
+        background: #1e3c72;
+        color: #ffffff;
+    }
+    .table th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+    }
+    .table td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #dee2e6;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(30, 60, 114, 0.1);
+    }
+    .alert-info {
+        background: #d1ecf1;
+        border: 1px solid #1e3c72;
+        color: #1e3c72;
+        border-radius: 8px;
+        padding: 15px;
+    }
 </style>
 </head>
 <body>
 
 <div class="sidebar d-flex flex-column p-3">
-    <h4 class="text-center">Catedrático</h4>
-    <hr>
-    
+    <h4>Catedrático</h4>
+    <hr style="border-color: #ffffff;">
     <a href="panel_catedraticos.php">Volver a Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
 </div>
@@ -128,7 +224,7 @@ $curso_seleccionado = isset($_GET['curso_id']) ? $_GET['curso_id'] : null;
             <tbody>
                 <?php foreach($estudiantes as $est): ?>
                 <tr>
-                    <td><?= htmlspecialchars($est['estudiante']) ?></td>
+                    <td class="fw-bold"><?= htmlspecialchars($est['estudiante']) ?></td>
                     <td><?= htmlspecialchars($est['materia']) ?></td>
                     <td><?= htmlspecialchars($est['semestre']) ?></td>
                     <td><?= $est['zona'] !== null ? $est['zona'] : '-' ?></td>

@@ -1,4 +1,3 @@
-
 <?php
 // conexion.php
 $host = "localhost";
@@ -21,19 +20,89 @@ $catedratico_id = $_SESSION['id_catedratico'];
 <title>Calendario de Exámenes - Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { display: flex; min-height: 100vh; margin: 0; }
-    .sidebar { width: 220px; background: #343a40; color: #fff; }
-    .sidebar a { color: #fff; text-decoration: none; display: block; padding: 12px 15px; }
-    .sidebar a:hover { background: #495057; }
-    .content { flex: 1; padding: 20px; }
-    .table thead { background-color: #007bff; color: #fff; }
+    body { 
+        display: flex; 
+        min-height: 100vh; 
+        margin: 0; 
+        background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
+        font-family: 'Segoe UI', sans-serif;
+    }
+    .sidebar { 
+        width: 220px; 
+        background: #1e3c72; 
+        color: #fff;
+        border-right: 3px solid #ffffff;
+    }
+    .sidebar a { 
+        color: #fff; 
+        text-decoration: none; 
+        display: block; 
+        padding: 12px 15px; 
+        margin: 5px 10px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.1);
+        transition: all 0.3s;
+    }
+    .sidebar a:hover { 
+        background: #ffffff;
+        color: #1e3c72;
+        transform: translateX(5px);
+    }
+    .content { 
+        flex: 1; 
+        padding: 30px;
+        background: #ffffff;
+        margin: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h2 {
+        color: #1e3c72;
+        font-weight: 700;
+        margin-bottom: 30px;
+    }
+    .sidebar h4 {
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+    .table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .table thead {
+        background: #1e3c72;
+        color: #ffffff;
+    }
+    .table th {
+        border: none;
+        padding: 15px;
+        font-weight: 600;
+    }
+    .table td {
+        padding: 15px;
+        vertical-align: middle;
+        border-color: #dee2e6;
+    }
+    .table-hover tbody tr:hover {
+        background-color: rgba(30, 60, 114, 0.1);
+    }
+    .alert-info {
+        background: #d1ecf1;
+        border: 1px solid #1e3c72;
+        color: #1e3c72;
+        border-radius: 8px;
+        padding: 15px;
+    }
 </style>
 </head>
 <body>
 
 <div class="sidebar d-flex flex-column p-3">
-    <h4 class="text-center">Catedrático</h4>
-    <hr>
+    <h4>Catedrático</h4>
+    <hr style="border-color: #ffffff;">
     <a href="panel_catedraticos.php">Volver a Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
 </div>
@@ -73,7 +142,7 @@ $catedratico_id = $_SESSION['id_catedratico'];
             <tbody>
                 <?php foreach($eventos as $ev): ?>
                 <tr>
-                    <td><?= htmlspecialchars($ev['tipo_registro']) ?></td>
+                    <td class="fw-bold"><?= htmlspecialchars($ev['tipo_registro']) ?></td>
                     <td><?= $ev['tipo_examen'] ?? '-' ?></td>
                     <td><?= date('d/m/Y', strtotime($ev['fecha'])) ?></td>
                     <td><?= substr($ev['hora'], 0, 5) ?></td>

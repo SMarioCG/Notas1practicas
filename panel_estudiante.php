@@ -1,5 +1,3 @@
-
-
 <?php
 //prototipo 
 $nombre_estudiante = "Estudiante Regional";
@@ -15,7 +13,7 @@ $nombre_estudiante = "Estudiante Regional";
 /* Body */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
     color: #fff;
     display: flex;
     min-height: 100vh;
@@ -23,8 +21,8 @@ body {
 
 /* Menú lateral */
 nav {
-    width: 180px;
-    background: rgba(20,20,30,0.95);
+    width: 200px;
+    background: #1e3c72;
     height: 100vh;
     position: fixed;
     left: 0;
@@ -32,70 +30,98 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 20px;
-    box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+    padding-top: 40px;
+    box-shadow: 3px 0 20px rgba(0,0,0,0.3);
+    border-right: 3px solid #ffffff;
 }
 nav a {
     display:block;
     padding:15px 20px;
-    color:#fff;
+    color:#ffffff;
     text-decoration:none;
     font-weight:500;
-    margin-top: 20px;
+    margin: 12px 0;
     border-left: 4px solid transparent;
-    transition: all 0.3s;
-    width: 100%;
+    transition: all 0.3s ease;
+    width: 90%;
     text-align: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
 }
 nav a:hover {
-    background: linear-gradient(90deg, #1a2a6c, #b21f1f);
-    transform: translateX(5px);
-    border-left: 4px solid #fff;
+    background: #ffffff;
+    color: #1e3c72;
+    transform: translateX(8px);
+    border-left: 4px solid #1e3c72;
+    box-shadow: 0 5px 15px rgba(255,255,255,0.2);
 }
 
 /* Main */
 main {
-    margin-left: 180px;
-    padding: 40px;
+    margin-left: 200px;
+    padding: 50px;
     flex: 1;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-    width: calc(100% - 180px);
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    width: calc(100% - 200px);
+    align-content: start;
 }
 
 /* Header */
 header {
     grid-column: 1/-1;
     text-align: center;
-    font-size: 2em;
+    font-size: 2.5em;
     font-weight: bold;
-    margin-bottom: 40px;
-    color: #ffd700;
+    margin-bottom: 50px;
+    color: #ffffff;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    padding: 30px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.3);
+    backdrop-filter: blur(10px);
 }
 
 /* Cards */
 .card {
-    background: rgba(255,255,255,0.05);
-    padding: 25px;
+    background: #ffffff;
+    padding: 35px 30px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
     text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: all 0.4s ease;
     cursor: pointer;
+    border: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
 }
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(30,60,114,0.4);
+    border-color: #1e3c72;
+}
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1e3c72, #3a6fd9);
 }
 .card h3 {
-    margin-bottom: 10px;
-    font-size: 1.4em;
-    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #1e3c72;
 }
 .card p {
-    color: #ccc;
-    line-height: 1.5;
+    color: #444;
+    line-height: 1.6;
+    font-weight: 500;
+    font-size: 1.05em;
 }
 </style>
 </head>
@@ -106,29 +132,22 @@ header {
 </nav>
 
 <main>
-<header> Bienvenido, <?php echo $nombre_estudiante; ?></header>
+<header>Bienvenido, <?php echo $nombre_estudiante; ?></header>
 
- <div class="card"  onclick="window.location.href='http://localhost:3000/cursos_panel_estudiante.php'" style="cursor: pointer;">
-    <h3> Mis Cursos</h3>
+ <div class="card" onclick="window.location.href='http://localhost:3000/cursos_panel_estudiante.php'">
+    <h3>Mis Cursos</h3>
     <p>Consultar los cursos en los que estás inscrito este semestre.</p>
 </div>
 
-<div class="card" onclick ="window.location.href='http://localhost:3000/notas_panel_estudiante.php'" style="cursor: pointer;">
-    <h3> Mis Notas</h3>
+<div class="card" onclick="window.location.href='http://localhost:3000/notas_panel_estudiante.php'">
+    <h3>Mis Notas</h3>
     <p>Ver tus calificaciones por materia y semestre, y tu promedio general.</p>
 </div>
 
-<div class="card" onclick ="window.location.href='http://localhost:3000/calendario_panel_estudiante.php'" style="cursor: pointer;">
-    <h3> Calendario Académico</h3>
-    <p>Revisar fechas de exámenes,y actividades importantes.</p>
+<div class="card" onclick="window.location.href='http://localhost:3000/calendario_examen_estudiantes.php'">
+    <h3>Calendario Académico</h3>
+    <p>Revisar fechas de exámenes y actividades importantes.</p>
 </div>
-
-
-
-
-
-
-
 
 </main>
 

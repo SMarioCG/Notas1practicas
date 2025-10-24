@@ -51,20 +51,21 @@ $resultado = $conexion->query("SELECT * FROM carreras");
 *{margin:0;padding:0;box-sizing:border-box;}
 body{
     font-family:'Segoe UI',sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
     color:#fff;
     display:flex;
+    min-height:100vh;
 }
 
 /* Sidebar */
 nav{
     width:240px;
-    background: rgba(20,20,30,0.95);
+    background:#1e3c72;
     height:100vh;
     padding-top:60px;
     position:fixed;
     left:0;
-    box-shadow:2px 0 15px rgba(0,0,0,0.5);
+    border-right: 3px solid #ffffff;
 }
 nav a{
     display:block;
@@ -74,11 +75,15 @@ nav a{
     font-weight:500;
     transition: all 0.3s;
     border-left:4px solid transparent;
+    margin: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
 }
 nav a:hover{
-    background:linear-gradient(90deg,#1a2a6c,#02cdfa6f);
+    background:#ffffff;
+    color:#1e3c72;
     transform:translateX(5px);
-    border-left:4px solid #fff;
+    border-left:4px solid #1e3c72;
 }
 
 /* Header */
@@ -88,11 +93,13 @@ header{
     top:0;
     width:calc(100% - 240px);
     padding:20px;
-    background: linear-gradient(90deg,#1a2a6c,#0086ecff);
+    background:#1e3c72;
     font-size:1.8em;
     font-weight:bold;
     box-shadow:0 4px 10px rgba(0,0,0,0.3);
     z-index:10;
+    color: #ffffff;
+    border-bottom: 3px solid #ffffff;
 }
 
 /* Main */
@@ -105,16 +112,17 @@ main{
 
 /* Card */
 .card{
-    background: rgba(255,255,255,0.05);
+    background: #ffffff;
     padding:25px;
     border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
     margin-bottom:30px;
+    border: 2px solid #1e3c72;
 }
 .card h2{
     margin-bottom:15px;
     font-size:1.4em;
-    color:#00eaff;
+    color:#1e3c72;
 }
 
 /* Form */
@@ -125,49 +133,137 @@ form{
     align-items:center;
 }
 form input, form button{
-    padding:8px;
+    padding:12px;
     border-radius:8px;
     border:none;
     outline:none;
+    font-size: 1em;
 }
 form input{
     flex:1;
-    background: rgba(255,255,255,0.1);
-    color:#fff;
+    background:#f8f9fa;
+    color:#333;
+    border: 2px solid #1e3c72;
+}
+form input:focus{
+    border-color: #3a6fd9;
+    background: #ffffff;
 }
 form button{
-    background:#0086ec;
+    background:#1e3c72;
     color:#fff;
     cursor:pointer;
-    transition: background 0.3s;
+    transition: all 0.3s;
+    font-weight: 600;
+    border: 2px solid #1e3c72;
 }
-form button:hover{background:#00bfff;}
+form button:hover{
+    background:#3a6fd9;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(30,60,114,0.3);
+}
 
 /* Tabla */
 table{
     width:100%;
     border-collapse:collapse;
     margin-top:20px;
-    background: rgba(255,255,255,0.05);
+    background: #ffffff;
     border-radius:12px;
     overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    border: 2px solid #1e3c72;
 }
-th,td{padding:12px;text-align:left;}
-th{background-color: rgba(0,234,255,0.8);color:#000;}
-tr:nth-child(even){background: rgba(255,255,255,0.05);}
+th,td{
+    padding:15px;
+    text-align:left;
+    border-bottom: 1px solid #dee2e6;
+}
+th{
+    background:#1e3c72;
+    color:#ffffff;
+    font-weight: 600;
+}
+td{
+    color: #333;
+}
+tr:nth-child(even){
+    background:#f8f9fa;
+}
 td a{
     text-decoration:none;
-    padding:6px 12px;
+    padding:8px 15px;
     border-radius:6px;
     margin-right:5px;
     font-size:0.9em;
     color:#fff;
+    transition: all 0.3s ease;
+    display: inline-block;
 }
-td a.edit{background:#27ae60;}
-td a.edit:hover{background:#1e8449;}
-td a.delete{background:#e74c3c;}
-td a.delete:hover{background:#c0392b;}
+td a.edit{
+    background:#1e3c72;
+    border: 1px solid #1e3c72;
+}
+td a.edit:hover{
+    background:#3a6fd9;
+    transform: translateY(-2px);
+}
+td a.delete{
+    background:#dc3545;
+    border: 1px solid #dc3545;
+}
+td a.delete:hover{
+    background:#c82333;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    nav {
+        width: 200px;
+    }
+    header {
+        left: 200px;
+        width: calc(100% - 200px);
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    main {
+        margin-left: 200px;
+        padding: 20px;
+    }
+    form {
+        flex-direction: column;
+    }
+    form input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    nav {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding-top: 20px;
+    }
+    header {
+        position: relative;
+        left: 0;
+        width: 100%;
+        margin-top: 0;
+    }
+    main {
+        margin-left: 0;
+        margin-top: 20px;
+    }
+    table {
+        font-size: 0.9em;
+    }
+    th, td {
+        padding: 10px;
+    }
+}
 </style>
 </head>
 <body>
@@ -190,7 +286,7 @@ td a.delete:hover{background:#c0392b;}
     </div>
 
     <div class="card">
-        <h2>📋 Lista de Carreras</h2>
+        <h2> Lista de Carreras</h2>
         <table>
             <tr>
                 <th>ID</th>

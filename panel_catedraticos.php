@@ -16,7 +16,7 @@ $_SESSION['rol'] = 'catedratico';
 /* Body */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1c1c2b, #2a2a3d, #3a3a50);
+    background: linear-gradient(135deg, #1e3c72, #2a5298, #3a6fd9);
     color: #fff;
     display: flex;
     min-height: 100vh;
@@ -25,7 +25,7 @@ body {
 /* Menú lateral */
 nav {
     width: 180px;
-    background: rgba(20,20,30,0.95);
+    background: #1e3c72;
     height: 100vh;
     position: fixed;
     left: 0;
@@ -35,12 +35,13 @@ nav {
     justify-content: flex-start;
     align-items: center;
     padding-top: 20px;
-    box-shadow: 2px 0 15px rgba(0,0,0,0.5);
+    box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+    border-right: 3px solid #ffffff;
 }
 nav a {
     display:block;
     padding:15px 20px;
-    color:#fff;
+    color:#ffffff;
     text-decoration:none;
     font-weight:500;
     margin-top: 20px;
@@ -48,11 +49,15 @@ nav a {
     transition: all 0.3s;
     width: 100%;
     text-align: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    margin: 10px 5px;
 }
 nav a:hover {
-    background: linear-gradient(90deg, #1a2a6c, #b21f1f);
+    background: #ffffff;
+    color: #1e3c72;
     transform: translateX(5px);
-    border-left: 4px solid #fff;
+    border-left: 4px solid #1e3c72;
 }
 
 /* Main */
@@ -73,61 +78,68 @@ header {
     font-size: 2em;
     font-weight: bold;
     margin-bottom: 40px;
-    color: #ffd700;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 15px;
+    border: 2px solid #ffffff;
 }
 
 /* Cards */
 .card {
-    background: rgba(255,255,255,0.05);
+    background: #ffffff;
     padding: 25px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     text-align: center;
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
+    border: 2px solid #1e3c72;
 }
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(30,60,114,0.4);
+    border-color: #3a6fd9;
 }
 .card h3 {
     margin-bottom: 10px;
     font-size: 1.4em;
-    color: #ffd700;
+    color: #1e3c72;
 }
 .card p {
-    color: #ccc;
+    color: #333333;
     line-height: 1.5;
+    font-weight: 500;
 }
 </style>
 </head>
 <body>
 
 <nav>
-    <a href="login.php"> Cerrar Sesión</a>
+    <a href="login.php">Cerrar Sesión</a>
 </nav>
 
 <main>
-<header> Bienvenido, Catedrático Regional</header>
+<header>Bienvenido, Catedrático Regional</header>
 
-<div class="card"  onclick="window.location.href='http://localhost:3000/subir_notas.php'" style="cursor: pointer;">
-    <h3> Subir Notas</h3>
+<div class="card" onclick="window.location.href='http://localhost:3000/subir_notas.php'">
+    <h3>Subir Notas</h3>
     <p>Registrar y actualizar calificaciones de los estudiantes de tus cursos asignados.</p>
 </div>
 
-<div class="card" onclick ="window.location.href='http://localhost:3000/mis_cursos._catedratico.php'" style="cursor: pointer;">
-    <h3> Mis Cursos</h3>
+<div class="card" onclick="window.location.href='http://localhost:3000/mis_cursos._catedratico.php'">
+    <h3>Mis Cursos</h3>
     <p>Visualizar los cursos y materias que tienes a cargo este semestre.</p>
 </div>
 
-<div class="card" onclick ="window.location.href='http://localhost:3000/visu_estudiantes_catedraticos.php'" style="cursor: pointer;">
-    <h3> Estudiantes</h3>
+<div class="card" onclick="window.location.href='http://localhost:3000/visu_estudiantes_catedraticos.php'">
+    <h3>Estudiantes</h3>
     <p>Ver la lista de estudiantes inscritos en tus cursos y su desempeño académico.</p>
 </div>
 
-
-<div class="card" onclick ="window.location.href='http://localhost:3000/calendario_catedratico.php'" style="cursor: pointer;">
-    <h3> Ver calendario de exámenes</h3>
+<div class="card" onclick="window.location.href='http://localhost:3000/calendario_catedratico.php'">
+    <h3>Ver calendario de exámenes</h3>
     <p>Fechas de exámenes y entregas de los cursos que impartes.</p>
 </div>
 
@@ -135,4 +147,3 @@ header {
 
 </body>
 </html>
-
