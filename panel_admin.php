@@ -661,12 +661,10 @@ function createParticles() {
     }
 }
 
-// Confirmar cierre de sesión
 function confirmLogout() {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-        window.location.href = '?logout=true';
-    }
+    window.location.href = '?logout=true';
 }
+
 
 // Actualizar hora en tiempo real
 function updateTime() {
