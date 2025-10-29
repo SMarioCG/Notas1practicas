@@ -54,12 +54,12 @@ $resultado = $conexion->query("SELECT * FROM administradores");
 <title>Dashboard Administradores</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',sans-serif;background:#121212;color:#fff;display:flex;}
+body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
 
 /* Sidebar */
 nav{
     width:240px;
-    background:#1c1c1c;
+    background:#004383;
     height:100vh;
     padding-top:60px;
     position:fixed;
@@ -74,7 +74,7 @@ nav a{
 }
 nav a:hover{
     background:#272727;
-    border-left:4px solid #00bfff;
+    border-left:4px solid #00bfffb6;
 }
 
 /* Header */
@@ -84,10 +84,10 @@ header{
     top:0;
     width:calc(100% - 240px);
     padding:20px;
-    background:#1a73e8;
+    background:#004383;
     font-size:1.8em;
     font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    box-shadow:0 4px 10px rgba(0, 0, 0, 1);
 }
 
 /* Main */
@@ -100,14 +100,14 @@ main{
 
 /* Card */
 .card{
-    background: #222;
+    background:#004383;
     padding:25px;
     border-radius:12px;
     margin-bottom:20px;
 }
 .card h2{
     margin-bottom:15px;
-    color:#00eaff;
+    color:#fff;
 }
 
 /* Form */

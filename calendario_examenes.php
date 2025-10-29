@@ -147,8 +147,9 @@ form input, form select, form button{
 }
 form input, form select{
     flex:1;
-    background: rgba(255,255,255,0.1);
+    background: rgb(231, 93, 37);
     color:#fff;
+    
 }
 form button{
     background:#0086ec;

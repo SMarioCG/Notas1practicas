@@ -4,7 +4,7 @@
 $host = "localhost";
 $db = "notasregional2";
 $user = "root";
-$pass = "";
+$pass = "pequeñocesar2025";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_start();

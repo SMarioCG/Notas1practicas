@@ -5,7 +5,7 @@ session_start();
 // Configuración de la base de datos
 $host = "localhost";
 $user = "root";
-$pass = "";
+$pass = "pequeñocesar2025";
 $db   = "notasregional2";
 
 // Conexión a la base de datos
@@ -794,25 +794,25 @@ body {
 
     <section class="stats-grid">
         <div class="stat-card fade-in" style="animation-delay: 0.1s">
-            <div class="stat-icon">👨‍🎓</div>
+            <div class="stat-icon"></div>
             <div class="stat-number" id="count-estudiantes">0</div>
             <div class="stat-label">Estudiantes Registrados</div>
         </div>
         
         <div class="stat-card fade-in" style="animation-delay: 0.2s">
-            <div class="stat-icon">👨‍🏫</div>
+            <div class="stat-icon"></div>
             <div class="stat-number" id="count-catedraticos">0</div>
             <div class="stat-label">Catedráticos</div>
         </div>
         
         <div class="stat-card fade-in" style="animation-delay: 0.3s">
-            <div class="stat-icon">📚</div>
+            <div class="stat-icon"></div>
             <div class="stat-number" id="count-materias">0</div>
             <div class="stat-label">Materias</div>
         </div>
         
         <div class="stat-card fade-in" style="animation-delay: 0.4s">
-            <div class="stat-icon">📝</div>
+            <div class="stat-icon"></div>
             <div class="stat-number" id="count-inscripciones">0</div>
             <div class="stat-label">Inscripciones</div>
         </div>
@@ -823,16 +823,16 @@ body {
         <div class="nav-grid">
             <?php
             $modules = [
-                'administradores.php' => ['👨‍💼', 'Administradores', 'Gestión de usuarios administrativos'],
-                'calendario_examenes.php' => ['📅', 'Calendario', 'Programación de evaluaciones'],
-                'carreras.php' => ['🎓', 'Carreras', 'Programas académicos'],
-                'catedraticos.php' => ['👨‍🏫', 'Catedráticos', 'Personal docente'],
-                'estudiantes.php' => ['👨‍🎓', 'Estudiantes', 'Registro académico'],
-                'inscripciones.php' => ['📝', 'Inscripciones', 'Proceso de matrícula'],
-                'materias.php' => ['📚', 'Materias', 'Plan de estudios'],
-                'cursos.php' => ['🏫', 'Cursos', 'Grupos y secciones'],
-                'notas.php' => ['📊', 'Notas', 'Sistema de calificaciones'],
-                'perfiles.php' => ['👤', 'Perfiles', 'Gestión de usuarios']
+                'administradores.php' => ['', 'Administradores', 'Gestión de usuarios administrativos'],
+                'calendario_examenes.php' => ['', 'Calendario', 'Programación de evaluaciones'],
+                'carreras.php' => ['', 'Carreras', 'Programas académicos'],
+                'catedraticos.php' => ['', 'Catedráticos', 'Personal docente'],
+                'estudiantes.php' => ['', 'Estudiantes', 'Registro académico'],
+                'inscripciones.php' => ['', 'Inscripciones', 'Proceso de matrícula'],
+                'materias.php' => ['', 'Materias', 'Plan de estudios'],
+                'cursos.php' => ['', 'Cursos', 'Grupos y secciones'],
+                'notas.php' => ['', 'Notas', 'Sistema de calificaciones'],
+                'perfiles.php' => ['', 'Perfiles', 'Gestión de usuarios']
             ];
             
             $delay = 0.1;
