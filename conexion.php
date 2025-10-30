@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$pass = "pequeñocesar2025";
+$pass = "";
 $db   = "notasregional2";
 
 $conexion = new mysqli($host, $user, $pass, $db);

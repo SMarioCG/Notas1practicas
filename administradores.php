@@ -74,7 +74,7 @@ nav a{
 }
 nav a:hover{
     background:#272727;
-    border-left:4px solid #00bfffb6;
+    border-left:4px solid #e06d09da;
 }
 
 /* Header */
@@ -120,8 +120,8 @@ form button:hover{background:#00bfff;}
 /* Tabla */
 table{width:100%;border-collapse:collapse;margin-top:20px;background:#222;border-radius:12px;overflow:hidden;}
 th,td{padding:12px;text-align:left;}
-th{background:#00eaff;color:#000;}
-tr:nth-child(even){background:#2a2a2a;}
+th{background:#fff;color:#000;}
+tr:nth-child(even){background;}
 td a{
     text-decoration:none;padding:6px 12px;border-radius:6px;margin-right:5px;font-size:0.9em;color:#fff;
 }

@@ -1,57 +1,12 @@
 <?php
 include("conexion.php");
 
-// Crear
-if(isset($_POST['guardar'])){
-    $id_estudiante = $_POST['id_estudiante'] ?? null;
-    $id_curso = $_POST['id_curso'] ?? null;
-    $fecha = $_POST['fecha_inscripcion'] ?? date('Y-m-d');
-
-    if($id_estudiante && $id_curso){
-        $sql = "INSERT INTO inscripciones (id_estudiante, id_curso, fecha_inscripcion) 
-                VALUES ('$id_estudiante','$id_curso','$fecha')";
-        $conexion->query($sql);
-        header("Location: inscripciones.php");
-        exit;
-    } else {
-        echo "Seleccione estudiante y curso.";
-    }
-}
-
-// Actualizar
-if(isset($_POST['actualizar'])){
-    $id = $_POST['id'] ?? null;
-    $id_estudiante = $_POST['id_estudiante'] ?? null;
-    $id_curso = $_POST['id_curso'] ?? null;
-    $fecha = $_POST['fecha_inscripcion'] ?? date('Y-m-d');
-
-    if($id && $id_estudiante && $id_curso){
-        $sql = "UPDATE inscripciones 
-                SET id_estudiante='$id_estudiante', id_curso='$id_curso', fecha_inscripcion='$fecha' 
-                WHERE id=$id";
-        $conexion->query($sql);
-        header("Location: inscripciones.php");
-        exit;
-    } else {
-        echo "Faltan datos para actualizar.";
-    }
-}
-
-// Eliminar
-if(isset($_GET['eliminar'])){
-    $id = $_GET['eliminar'];
-    $conexion->query("DELETE FROM inscripciones WHERE id=$id");
-    header("Location: inscripciones.php");
-    exit;
-}
-
-// Editar
+// Editar y Consultar
 if(isset($_GET['editar'])){
     $id = $_GET['editar'];
     $editar = $conexion->query("SELECT * FROM inscripciones WHERE id=$id")->fetch_assoc();
 }
 
-// Consultar
 $resultado = $conexion->query("SELECT i.*, e.nombre AS estudiante, c.semestre, m.nombre AS materia, CONCAT(ca.nombre,' ',ca.apellido) AS catedratico
                                FROM inscripciones i
                                LEFT JOIN estudiantes e ON i.id_estudiante=e.id
@@ -64,141 +19,145 @@ $resultado = $conexion->query("SELECT i.*, e.nombre AS estudiante, c.semestre, m
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard de Inscripciones</title>
+<title>Inscripciones - Estudiante</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-* {margin:0; padding:0; box-sizing:border-box;}
 body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-    color:#fff;
-    display:flex;
+    background: #f4f6f9;
+    color: #333;
 }
 
 /* Sidebar */
-nav {
-    width:240px;
-    background: rgba(20,20,30,0.95);
-    height:100vh;
-    padding-top:60px;
-    position:fixed;
-    left:0;
-    box-shadow:2px 0 15px rgba(0,0,0,0.5);
+.sidebar {
+    width: 230px;
+    background: #004383;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 20px;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.3);
 }
-nav a {
-    display:block;
-    padding:15px 25px;
-    color:#fff;
-    text-decoration:none;
-    font-weight:500;
-    transition: all 0.3s;
-    border-left:4px solid transparent;
+.sidebar h4 {
+    font-weight: 700;
+    font-size: 1.2em;
+    text-align: center;
+    color: #ffb300;
+    margin-bottom: 15px;
 }
-nav a:hover {
-    background:linear-gradient(90deg,#1a2a6c,#02cdfa6f);
-    transform:translateX(5px);
-    border-left:4px solid #fff;
+.sidebar hr {
+    border: none;
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+    margin: 10px 0 20px 0;
 }
-
-/* Header */
-header {
-    position:fixed;
-    left:240px;
-    top:0;
-    width:calc(100% - 240px);
-    padding:20px;
-    background: linear-gradient(90deg,#1a2a6c,#0086ecff);
-    font-size:1.8em;
-    font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
-    z-index:10;
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
-
-/* Main */
-main {
-    margin-left:240px;
-    margin-top:80px;
-    padding:30px;
-    flex:1;
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffb300;
+    transform: translateX(4px);
 }
 
-/* Card */
+/* Contenido */
+.content {
+    flex: 1;
+    padding: 40px;
+}
+.content h2 {
+    color: #004383;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
 .card {
-    background: rgba(255,255,255,0.05);
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-    margin-bottom:30px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 25px;
+    margin-bottom: 30px;
+    transition: transform 0.2s;
 }
-.card h2 {
-    margin-bottom:15px;
-    font-size:1.4em;
-    color:#00eaff;
-}
+.card:hover { transform: translateY(-3px); }
 
 /* Formulario */
 form {
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 form input, form select, form button {
-    padding:8px;
-    border-radius:8px;
-    border:none;
-    outline:none;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
 }
 form input, form select {
-    flex:1;
-    background: rgba(255,255,255,0.1);
-    color:#fff;
+    flex: 1;
+    background: #f0f2f5;
+    color: #004383;
+    font-weight: 500;
 }
 form button {
-    background:#0086ec;
-    color:#fff;
-    cursor:pointer;
-    transition: background 0.3s;
+    background: #004383;
+    color: #ffb300;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
 }
-form button:hover {background:#00bfff;}
+form button:hover {
+    background: #0059a0;
+    color: #fff;
+}
 
 /* Tabla */
-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    background: rgba(255,255,255,0.05);
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-}
-th,td {padding:12px;text-align:left;}
-th {background-color: rgba(0,234,255,0.8);color:#000;}
-tr:nth-child(even){background: rgba(255,255,255,0.05);}
+.table-container { overflow-x:auto; }
+.table thead { background: #004383; color: #ffb300; }
+.table tbody tr:hover { background-color: rgba(0,67,131,0.05); }
+.table td, .table th { text-align: center; padding: 12px; }
+.table td:first-child { font-weight: 500; }
+
+/* Botones de acción */
 td a {
-    text-decoration:none;
-    padding:6px 12px;
-    border-radius:6px;
-    margin-right:5px;
-    font-size:0.9em;
-    color:#fff;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-right: 5px;
+    font-size: 0.9em;
 }
-td a.edit {background:#27ae60;}
-td a.edit:hover {background:#1e8449;}
+td a.edit {background:#ffb300; color:#004383; font-weight:600;}
+td a.edit:hover {background:#e6a100;}
 td a.delete {background:#e74c3c;}
 td a.delete:hover {background:#c0392b;}
 </style>
 </head>
 <body>
-<nav>
-    <a href="panel_admin.php">Volver a Panel Principal</a>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h4>Gestión de Inscripciones</h4>
+    <hr>
+    <a href="panel_estudiante.php">Volver a Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
-</nav>
+</div>
 
-<header>Dashboard de Inscripciones</header>
+<!-- Contenido principal -->
+<div class="content">
+    <h2>📋 Inscripciones</h2>
 
-<main>
+    <!-- Formulario -->
     <div class="card">
-        <h2>➕ <?= isset($editar)? "Editar Inscripción" : "Agregar Inscripción" ?></h2>
+        <h4>➕ <?= isset($editar)? "Editar Inscripción" : "Agregar Inscripción" ?></h4>
         <form method="post">
             <input type="hidden" name="id" value="<?= isset($editar)?$editar['id']:'' ?>">
 
@@ -236,34 +195,39 @@ td a.delete:hover {background:#c0392b;}
         </form>
     </div>
 
-    <div class="card">
-        <h2>📋 Lista de Inscripciones</h2>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Estudiante</th>
-                <th>Materia</th>
-                <th>Catedrático</th>
-                <th>Semestre</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-            </tr>
-            <?php while($fila = $resultado->fetch_assoc()): ?>
-            <tr>
-                <td><?= $fila['id'] ?></td>
-                <td><?= $fila['estudiante'] ?></td>
-                <td><?= $fila['materia'] ?></td>
-                <td><?= $fila['catedratico'] ?></td>
-                <td><?= $fila['semestre'] ?></td>
-                <td><?= $fila['fecha_inscripcion'] ?></td>
-                <td>
-                    <a href="?editar=<?= $fila['id'] ?>" class="edit">Editar</a>
-                    <a href="?eliminar=<?= $fila['id'] ?>" class="delete" onclick="return confirm('¿Eliminar inscripción?')">Eliminar</a>
-                </td>
-            </tr>
-            <?php endwhile; ?>
+    <!-- Tabla de inscripciones -->
+    <div class="card table-container">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Estudiante</th>
+                    <th>Materia</th>
+                    <th>Catedrático</th>
+                    <th>Semestre</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while($fila = $resultado->fetch_assoc()): ?>
+                <tr>
+                    <td><?= $fila['id'] ?></td>
+                    <td><?= $fila['estudiante'] ?></td>
+                    <td><?= $fila['materia'] ?></td>
+                    <td><?= $fila['catedratico'] ?></td>
+                    <td><?= $fila['semestre'] ?></td>
+                    <td><?= $fila['fecha_inscripcion'] ?></td>
+                    <td>
+                        <a href="?editar=<?= $fila['id'] ?>" class="edit">Editar</a>
+                        <a href="?eliminar=<?= $fila['id'] ?>" class="delete" onclick="return confirm('¿Eliminar inscripción?')">Eliminar</a>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
         </table>
     </div>
-</main>
+</div>
+
 </body>
 </html>

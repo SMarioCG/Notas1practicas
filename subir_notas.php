@@ -3,7 +3,7 @@
 $host = "localhost";
 $db = "notasregional2";
 $user = "root";
-$pass = "pequeñocesar2025";
+$pass = "";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_start();
@@ -19,26 +19,104 @@ $catedratico_id = $_SESSION['id_catedratico'];
 <title>Dashboard Catedrático</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { display: flex; min-height: 100vh; margin: 0; }
-    .sidebar { width: 220px; background: #343a40; color: #fff; }
-    .sidebar a { color: #fff; text-decoration: none; display: block; padding: 12px 15px; }
-    .sidebar a:hover { background: #495057; }
-    .content { flex: 1; padding: 20px; }
-    .card { cursor: pointer; transition: 0.3s; }
-    .card:hover { transform: scale(1.05); }
+    body { 
+        display: flex; 
+        min-height: 100vh; 
+        margin: 0; 
+        background: #f8f9fa;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    /* === MENÚ LATERAL === */
+    .sidebar { 
+        width: 220px; 
+        background: #004383; 
+        color: #fff; 
+    }
+    .sidebar h4 {
+        text-align: center;
+        margin-top: 20px;
+        color: #ffb300; /* Mostaza */
+        font-weight: bold;
+    }
+    .sidebar a { 
+        color: #fff; 
+        text-decoration: none; 
+        display: block; 
+        padding: 12px 15px; 
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+    }
+    .sidebar a:hover { 
+        background: rgba(255,255,255,0.1);
+        border-left: 4px solid #ffb300; 
+    }
+
+    /* === CONTENIDO === */
+    .content { 
+        flex: 1; 
+        padding: 30px; 
+    }
+    .content h2 {
+        color: #004383;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    /* === TARJETAS DE CURSOS === */
+    .card { 
+        cursor: pointer; 
+        transition: 0.3s; 
+        border: none;
+        background: #004383; 
+    }
+    .card:hover { 
+        transform: scale(1.05); 
+        box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    }
+    .card .card-body {
+        color: #fff;
+    }
+    .card-title {
+        color: #ffb300; /* Mostaza para destacar nombres */
+        font-weight: bold;
+    }
+
+    /* === TABLA === */
+    table thead {
+        background-color: #004383;
+        color: #fff;
+    }
+    table tbody tr:hover {
+        background-color: #e9f0ff;
+    }
+
+    /* === BOTÓN GUARDAR === */
+    .btn-success {
+        background-color: #ffb300;
+        border: none;
+        color: #000;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-success:hover {
+        background-color: #e6a000;
+        color: #fff;
+    }
+
 </style>
 </head>
 <body>
 
 <div class="sidebar d-flex flex-column p-3">
-    <h4 class="text-center">Catedrático</h4>
-    <hr>
-    <a href="panel_catedraticos.php">Volver a Panel Principal</a>
+    <h4>CATEDRÁTICO</h4>
+    <hr class="border-light">
+    <a href="panel_catedraticos.php">Volver al Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
 </div>
 
 <div class="content">
-    <h2 class="mb-4">Subir Notas</h2>
+    <h2>Subir Notas</h2>
 
     <!-- Mostrar cursos como cards -->
     <div class="row">
@@ -54,7 +132,7 @@ $catedratico_id = $_SESSION['id_catedratico'];
     foreach($cursos as $curso):
     ?>
         <div class="col-md-4 mb-3">
-            <div class="card text-white bg-primary" onclick="window.location='?curso_id=<?= $curso['id'] ?>'">
+            <div class="card" onclick="window.location='?curso_id=<?= $curso['id'] ?>'">
                 <div class="card-body">
                     <h5 class="card-title"><?= htmlspecialchars($curso['materia']) ?></h5>
                     <p class="card-text">Semestre: <?= htmlspecialchars($curso['semestre']) ?></p>
@@ -67,9 +145,9 @@ $catedratico_id = $_SESSION['id_catedratico'];
     <?php if(isset($_GET['curso_id']) && $_GET['curso_id'] != ''): 
         $curso_id = $_GET['curso_id'];
 
-        // Obtener estudiantes inscritos en el curso
         $stmt = $pdo->prepare("
-            SELECT i.id AS id_inscripcion, e.nombre AS estudiante, n.id AS nota_id, n.zona, n.fase_1, n.fase_2, n.fase_final, n.observaciones
+            SELECT i.id AS id_inscripcion, e.nombre AS estudiante, n.id AS nota_id, 
+                   n.zona, n.fase_1, n.fase_2, n.fase_final, n.observaciones
             FROM inscripciones i
             JOIN estudiantes e ON i.id_estudiante = e.id
             LEFT JOIN notas n ON n.id_inscripcion = i.id
@@ -80,10 +158,15 @@ $catedratico_id = $_SESSION['id_catedratico'];
     ?>
 
     <div class="mt-4">
-        <h4>Agregar Notas - Curso: <?= htmlspecialchars($cursos[array_search($curso_id, array_column($cursos, 'id'))]['materia']) ?></h4>
+        <h4 style="color:#004383;"> Agregar Notas - 
+            <span style="color:#ffb300;">
+                <?= htmlspecialchars($cursos[array_search($curso_id, array_column($cursos, 'id'))]['materia']) ?>
+            </span>
+        </h4>
+
         <form method="POST">
             <input type="hidden" name="curso_id" value="<?= $curso_id ?>">
-            <table class="table table-bordered">
+            <table class="table table-bordered mt-3">
                 <thead>
                     <tr>
                         <th>Estudiante</th>
@@ -99,14 +182,12 @@ $catedratico_id = $_SESSION['id_catedratico'];
                     <tr>
                         <td><?= htmlspecialchars($est['estudiante']) ?></td>
                         <?php if($est['nota_id']): ?>
-                            <!-- Solo lectura si ya tiene nota -->
                             <td><input type="number" value="<?= $est['zona'] ?>" class="form-control" readonly></td>
                             <td><input type="number" value="<?= $est['fase_1'] ?>" class="form-control" readonly></td>
                             <td><input type="number" value="<?= $est['fase_2'] ?>" class="form-control" readonly></td>
                             <td><input type="number" value="<?= $est['fase_final'] ?>" class="form-control" readonly></td>
                             <td><input type="text" value="<?= htmlspecialchars($est['observaciones']) ?>" class="form-control" readonly></td>
                         <?php else: ?>
-                            <!-- Permitir agregar notas -->
                             <td><input type="number" step="0.01" name="notas[<?= $est['id_inscripcion'] ?>][zona]" class="form-control" required></td>
                             <td><input type="number" step="0.01" name="notas[<?= $est['id_inscripcion'] ?>][fase_1]" class="form-control" required></td>
                             <td><input type="number" step="0.01" name="notas[<?= $est['id_inscripcion'] ?>][fase_2]" class="form-control" required></td>
@@ -117,14 +198,13 @@ $catedratico_id = $_SESSION['id_catedratico'];
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <button type="submit" name="guardar_notas" class="btn btn-success">Guardar Notas Nuevas</button>
+            <button type="submit" name="guardar_notas" class="btn btn-success mt-3">💾 Guardar Notas Nuevas</button>
         </form>
     </div>
     <?php endif; ?>
 </div>
 
 <?php
-// Guardar notas nuevas
 if(isset($_POST['guardar_notas'])) {
     $notas = $_POST['notas'];
     foreach($notas as $id_inscripcion => $data) {

@@ -22,7 +22,7 @@ if(isset($_POST['login'])){
                 $_SESSION['id'] = $user['id'];
                 $_SESSION['rol'] = 'Administrador';
                 $_SESSION['nombre'] = $user['nombre'];
-                header("Location: administradores.php");
+                header("Location: panel_admin.php");
                 exit;
             }
         }
@@ -63,6 +63,19 @@ if(isset($_POST['login'])){
     <title>Login - Sistema Académico</title>
     <link rel="stylesheet" href="estilos.css">
     <style>
+        
+
+
+
+        body {
+            background-image: url('https://moria.aurens.com/assets/organization/4b74336d-c7cd-43e6-b1ff-2f806d37ba73/images/435cb2-uregional.jpeg');
+            background-size: 1400px 400px;      /* ancho x alto de la imagen */
+            background-position: center;   /* centrada horizontal, arriba vertical */
+            background-repeat: no-repeat;      /* no se repite */
+            background-attachment: fixed;      /* se queda fija al hacer scroll */
+            background-color: #f0f0f0;         /* color de fondo detrás de la imagen */
+        }
+        
         .login-container {
             max-width: 400px;
             margin: 80px auto;
@@ -103,10 +116,41 @@ if(isset($_POST['login'])){
             text-align: center;
             margin-bottom: 10px;
         }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.9); /* blanco con transparencia */
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .footer-header {
+    width: 100%;                    /* ocupa todo el ancho */
+    background-color: #6a1b9a;      /* color morado */
+    color: #ffffff;                 /* texto blanco */
+    text-align: center;             /* texto centrado */
+    padding: 10px 0;                /* espacio arriba y abajo */
+    font-size: 14px;                /* tamaño de letra pequeño */
+    position: fixed;                /* fijo en pantalla */
+    bottom: 0;                      /* en la parte inferior */
+    left: 0;                        /* desde el borde izquierdo */
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2); /* sombra suave arriba */
+    z-index: 1000;                  /* para que esté encima de otros elementos */
+}
+
+
+
     </style>
 </head>
 <body>
 
+
+
+
+
+
+
+ <div class="logo">
+    <img src="https://moria.aurens.com/organizations/362029ae-4545-4e01-a1d9-5a79a6e6f493/logos/26b681-regional.png" width="490" height="145">
+</div>
 <div class="login-container">
     <h2>Iniciar Sesión</h2>
 
@@ -126,6 +170,12 @@ if(isset($_POST['login'])){
         </select>
         <input type="submit" name="login" value="Iniciar Sesión">
     </form>
+        <!-- Encabezado morado fijo abajo -->
+<div class="footer-header">
+    
+</div>
+
+    
 </div>
 
 </body>
