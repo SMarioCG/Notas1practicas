@@ -4,9 +4,9 @@ session_start();
 
 // Configuración de la base de datos
 $host = "localhost";
+$db   = "notasregional3";
 $user = "root";
 $pass = "";
-$db   = "notasregional3";
 
 // Conexión a la base de datos
 $conexion = new mysqli($host, $user, $pass, $db);
