@@ -5,7 +5,7 @@ session_start();
 // Configuración de la base de datos
 $host = "localhost";
 $user = "root";
-$pass = "pequeñocesar2025";
+$pass = "admin123";
 $db   = "notasregional2";
 
 // Conexión a la base de datos
