@@ -54,7 +54,7 @@ $resultado = $conexion->query("SELECT cu.*, m.nombre AS materia, CONCAT(ca.nombr
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Dashboard de Gestión de Cursos</title>
+  <title>Gestionar Cursos</title>
   <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
@@ -139,7 +139,7 @@ td a.delete:hover{background:#c0392b;}
     <a href="login.php">Cerrar Sesión</a>
   </nav>
 
-  <header>Dashboard de Gestión de Cursos</header>
+  <header>Gestionar Cursos</header>
 
   <main>
     <div class="card">

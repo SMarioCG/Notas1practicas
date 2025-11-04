@@ -1,7 +1,7 @@
 <?php
 // ======== CONEXIÓN A LA BASE DE DATOS ========
 $host = "localhost";
-$db = "notasregional2";
+$db = "notasregional3";
 $user = "root";
 $pass = "";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);

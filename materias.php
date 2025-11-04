@@ -67,7 +67,7 @@ if ($id_carrera > 0) {
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard de Materias</title>
+<title>Gestionar Materias</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
@@ -101,7 +101,7 @@ select#filtroCarrera{padding:8px;background:#333;color:#fff;border-radius:8px;}
     <a href="login.php">Cerrar Sesión</a>
 </nav>
 
-<header>Dashboard de Gestión de Materias</header>
+<header>Gestionar Materias</header>
 
 <main>
     <div class="card">

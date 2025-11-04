@@ -43,7 +43,7 @@ $resultado = $conexion->query("SELECT * FROM perfiles");
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard de Gestión de Perfiles</title>
+    <title>Gestionar Perfiles</title>
     <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
@@ -128,7 +128,7 @@ td a.delete:hover{background:#c0392b;}
         <a href="login.php">Cerrar Sesión</a>
     </nav>
 
-    <header>Dashboard de Gestión de Perfiles</header>
+    <header>Gestionar Perfiles</header>
 
     <main>
         <div class="card">

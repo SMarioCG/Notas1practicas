@@ -1,16 +1,20 @@
 <?php
 // conexion.php
 $host = "localhost";
-$db = "notasregional2";
+$db = "notasregional3";
 $user = "root";
 $pass = "";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 session_start();
 
-// Simular sesión del catedrático
-$_SESSION['id_catedratico'] = 1;
-$catedratico_id = $_SESSION['id_catedratico'];
+// Validar que esté logueado como catedrático
+if(!isset($_SESSION['id']) || $_SESSION['rol'] !== 'Catedrático'){
+    header("Location: login.php");
+    exit;
+}
+
+$catedratico_id = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -27,8 +31,6 @@ $catedratico_id = $_SESSION['id_catedratico'];
         background: #f8f9fa;
         font-family: 'Segoe UI', sans-serif;
     }
-
-    /* === MENÚ LATERAL === */
     .sidebar { 
         width: 220px; 
         background: #004383; 
@@ -37,7 +39,7 @@ $catedratico_id = $_SESSION['id_catedratico'];
     .sidebar h4 {
         text-align: center;
         margin-top: 20px;
-        color: #ffb300; /* Mostaza */
+        color: #ffb300;
         font-weight: bold;
     }
     .sidebar a { 
@@ -52,8 +54,6 @@ $catedratico_id = $_SESSION['id_catedratico'];
         background: rgba(255,255,255,0.1);
         border-left: 4px solid #ffb300; 
     }
-
-    /* === CONTENIDO === */
     .content { 
         flex: 1; 
         padding: 30px; 
@@ -63,8 +63,6 @@ $catedratico_id = $_SESSION['id_catedratico'];
         font-weight: bold;
         margin-bottom: 25px;
     }
-
-    /* === TARJETAS DE CURSOS === */
     .card { 
         cursor: pointer; 
         transition: 0.3s; 
@@ -79,39 +77,14 @@ $catedratico_id = $_SESSION['id_catedratico'];
         color: #fff;
     }
     .card-title {
-        color: #ffb300; /* Mostaza para destacar nombres */
+        color: #ffb300;
         font-weight: bold;
     }
-
-    /* === TABLA === */
-    table thead {
-        background-color: #004383;
-        color: #fff;
-    }
-    table tbody tr:hover {
-        background-color: #e9f0ff;
-    }
-
-    /* === BOTÓN GUARDAR === */
-    .btn-success {
-        background-color: #ffb300;
-        border: none;
-        color: #000;
-        font-weight: 600;
-        transition: 0.3s;
-    }
-    .btn-success:hover {
-        background-color: #e6a000;
-        color: #fff;
-    }
-
 </style>
 </head>
 <body>
-    
-
 <div class="sidebar d-flex flex-column p-3">
-    <h4 class="text-center">Catedrático</h4>
+    <h4 class="text-center"><?= htmlspecialchars($_SESSION['nombre']) ?></h4>
     <a href="panel_catedraticos.php">Volver a Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
 </div>
@@ -121,7 +94,7 @@ $catedratico_id = $_SESSION['id_catedratico'];
 
     <div class="row">
     <?php
-    // Obtener cursos asignados al catedrático
+    // Obtener cursos asignados al catedrático logueado
     $stmt = $pdo->prepare("
         SELECT c.id AS id_curso, m.nombre AS materia, m.codigo, c.semestre, ca.nombre AS carrera
         FROM cursos c
@@ -139,7 +112,7 @@ $catedratico_id = $_SESSION['id_catedratico'];
         foreach($cursos as $curso):
     ?>
         <div class="col-md-4 mb-3">
-            <div class="card border-primary">
+            <div class="card border-primary" onclick="window.location.href='subir_notas.php?curso_id=<?= $curso['id_curso'] ?>'">
                 <div class="card-body">
                     <h5 class="card-title"><?= htmlspecialchars($curso['materia']) ?></h5>
                     <p class="card-text"><strong>Código:</strong> <?= htmlspecialchars($curso['codigo']) ?></p>
@@ -154,6 +127,5 @@ $catedratico_id = $_SESSION['id_catedratico'];
     ?>
     </div>
 </div>
-
 </body>
 </html>

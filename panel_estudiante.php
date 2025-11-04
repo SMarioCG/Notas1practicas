@@ -1,6 +1,37 @@
 <?php
-// prototipo
-$nombre_estudiante = "Estudiante Regional";
+session_start();
+
+// Configuración de la base de datos
+$host = "localhost";
+$user = "root";
+$pass = "";
+$db   = "notasregional3";
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Error de conexión: " . $e->getMessage());
+}
+
+// Validar sesión de estudiante
+if(!isset($_SESSION['correo']) || $_SESSION['rol'] !== 'Estudiante'){
+    header("Location: login.php");
+    exit;
+}
+
+// Obtener datos del estudiante según el correo
+$correo_estudiante = $_SESSION['correo'];
+$stmt = $pdo->prepare("SELECT id, nombre FROM estudiantes WHERE correo = ?");
+$stmt->execute([$correo_estudiante]);
+$estudiante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if(!$estudiante){
+    die("Estudiante no encontrado.");
+}
+
+$nombre_estudiante = $estudiante['nombre'];
+$estudiante_id = $estudiante['id'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -98,7 +129,7 @@ main {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 25px;
     width: calc(100% - 200px);
-    align-items: start; /* Asegura que todas las tarjetas comiencen desde la misma posición */
+    align-items: start;
 }
 
 /* === TARJETAS - MISMO TAMAÑO === */
@@ -111,11 +142,11 @@ main {
     transition: all 0.3s ease;
     border-top: 5px solid #004383;
     cursor: pointer;
-    min-height: 180px; /* Altura mínima igual para todas */
+    min-height: 180px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100%; /* Ocupa toda la altura disponible en la celda de grid */
+    height: 100%;
 }
 
 .card:hover {
@@ -135,7 +166,7 @@ main {
     color: #555;
     line-height: 1.5;
     font-size: 1em;
-    margin: 0; /* Elimina márgenes extra */
+    margin: 0;
 }
 
 /* === PIE DE PÁGINA OPCIONAL === */
@@ -159,25 +190,25 @@ footer {
         <div class="logo">
             <img src="https://moria.aurens.com/organizations/362029ae-4545-4e01-a1d9-5a79a6e6f493/logos/26b681-regional.png" alt="Logo Regional">
         </div>
-        <div class="bienvenida">Bienvenido, <?php echo $nombre_estudiante; ?></div>
+        <div class="bienvenida">Bienvenido, <?= htmlspecialchars($nombre_estudiante) ?></div>
     </header>
 
-    <div class="card" onclick="window.location.href='http://localhost:3000/cursos_panel_estudiante.php'">
+    <div class="card" onclick="window.location.href='cursos_panel_estudiante.php?estudiante_id=<?= $estudiante_id ?>'">
         <h3>Mis Cursos</h3>
         <p>Consulta los cursos en los que estás inscrito este semestre.</p>
     </div>
 
-    <div class="card" onclick="window.location.href='http://localhost:3000/notas_panel_estudiante.php'">
+    <div class="card" onclick="window.location.href='notas_panel_estudiante.php?estudiante_id=<?= $estudiante_id ?>'">
         <h3>Mis Notas</h3>
         <p>Visualiza tus calificaciones, promedios y resultados por materia.</p>
     </div>
 
-    <div class="card" onclick="window.location.href='http://localhost:3000/calendario_examen_estudiantes.php'">
+    <div class="card" onclick="window.location.href='calendario_examen_estudiantes.php?estudiante_id=<?= $estudiante_id ?>'">
         <h3>Calendario Académico</h3>
         <p>Consulta las fechas de exámenes, entregas y eventos importantes.</p>
     </div>
 
-    <div class="card" onclick="window.location.href='http://localhost:3000/inscripciones.php'">
+    <div class="card" onclick="window.location.href='inscripciones.php?estudiante_id=<?= $estudiante_id ?>'">
         <h3>Inscripciones</h3>
         <p>Revisa el estado de tus inscripciones y los cursos disponibles.</p>
     </div>

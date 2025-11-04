@@ -61,7 +61,7 @@ $resultado = $conexion->query("SELECT ce.*, a.nombre AS admin, CONCAT(ca.nombre,
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Calendario de Exámenes</title>
+<title>calendario General</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
@@ -146,7 +146,7 @@ td a.delete:hover{background:#c0392b;}
     <a href="login.php">Cerrar sesión</a>
 </nav>
 
-<header>Dashboard Calendario de Exámenes</header>
+<header>Calendario de General</header>
 
 <main>
     <div class="card">

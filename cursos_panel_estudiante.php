@@ -1,15 +1,23 @@
 <?php
 // conexion.php
 $host = "localhost";
-$db = "notasregional2";
+$db = "notasregional3";
 $user = "root";
 $pass = "";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Simular estudiante
-$estudiante_id = 1;
-$nombre_estudiante = "Juan Pérez";
+session_start();
+
+// Validar sesión estudiante
+if(!isset($_SESSION['id']) || $_SESSION['rol'] !== 'Estudiante'){
+    header("Location: login.php");
+    exit;
+}
+
+// Obtener datos del estudiante logueado
+$estudiante_id = $_SESSION['id'];
+$nombre_estudiante = $_SESSION['nombre'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -77,16 +85,7 @@ body {
     color: #004383;
     font-weight: 700;
     margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
-.content h2::before {
-    content: "";
-    font-size: 1.3em;
-}
-
-/* === TABLA === */
 .table-container {
     background: #fff;
     border-radius: 12px;
@@ -102,16 +101,6 @@ body {
 .table tbody tr:hover {
     background-color: rgba(0,67,131,0.05);
 }
-.table td, .table th {
-    vertical-align: middle !important;
-    text-align: center;
-    padding: 12px;
-}
-.table td:first-child {
-    font-weight: 500;
-}
-
-/* === ALERTA === */
 .alert-info {
     background-color: rgba(0,67,131,0.1);
     border: 1px solid #004383;
@@ -119,8 +108,6 @@ body {
     border-radius: 10px;
     padding: 15px;
 }
-
-/* === PIE OPCIONAL === */
 footer {
     text-align: center;
     color: #777;
@@ -144,6 +131,7 @@ footer {
     <h2>Mis Cursos Inscritos</h2>
 
     <?php
+    // Consultar los cursos del estudiante autenticado
     $stmt = $pdo->prepare("
         SELECT 
             m.nombre AS materia,

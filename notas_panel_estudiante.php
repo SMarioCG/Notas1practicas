@@ -1,7 +1,7 @@
 <?php
 // ======== CONEXIÓN A LA BASE DE DATOS ========
 $host = "localhost";
-$db = "notasregional2";
+$db = "notasregional3";
 $user = "root";
 $pass = "";
 $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
@@ -17,7 +17,7 @@ if(isset($_POST['consultar'])){
     $correo = trim($_POST['correo'] ?? '');
     if($correo){
         // Buscar estudiante por correo
-        $stmt = $pdo->prepare("SELECT id, nombre, apellido FROM estudiantes WHERE correo_estudiante = ?");
+        $stmt = $pdo->prepare("SELECT id, nombre, apellido FROM estudiantes WHERE correo = ?");
         $stmt->execute([$correo]);
         $est = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -25,27 +25,32 @@ if(isset($_POST['consultar'])){
             $estudiante_id = $est['id'];
             $nombre_estudiante = $est['nombre'] . " " . $est['apellido'];
 
-            // Consultar notas
+            // Consultar todas las notas individuales
             $stmt = $pdo->prepare("
                 SELECT 
                     m.nombre AS materia,
                     c.semestre,
-                    COALESCE(n.nota_final, 0) AS nota_final,
+                    n.zona,
+                    n.fase_1,
+                    n.fase_2,
+                    n.fase_final,
+                    n.nota_final,
                     COALESCE(n.observaciones, '-') AS observaciones
                 FROM inscripciones i
                 INNER JOIN cursos c ON i.id_curso = c.id
                 INNER JOIN materias m ON c.id_materia = m.id
                 LEFT JOIN notas n ON n.id_inscripcion = i.id
                 WHERE i.id_estudiante = ?
-                ORDER BY c.semestre, m.nombre
+                ORDER BY c.semestre ASC, m.nombre ASC
             ");
             $stmt->execute([$estudiante_id]);
             $notas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Calcular promedio
-            if(count($notas) > 0){
-                $total = array_sum(array_column($notas, 'nota_final'));
-                $promedio = round($total / count($notas), 2);
+            // Calcular promedio considerando todas las notas registradas
+            $notas_validas = array_filter($notas, fn($n) => $n['nota_final'] !== null);
+            if(count($notas_validas) > 0){
+                $total = array_sum(array_column($notas_validas, 'nota_final'));
+                $promedio = round($total / count($notas_validas), 2);
             }
         } else {
             $error = "No se encontró ningún estudiante con ese correo.";
@@ -63,23 +68,8 @@ if(isset($_POST['consultar'])){
 <title>Consultar Notas - Estudiante</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body {
-    display: flex;
-    min-height: 100vh;
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f9;
-    color: #333;
-}
-.sidebar {
-    width: 230px;
-    background: #004383;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 25px 20px;
-    box-shadow: 3px 0 10px rgba(0,0,0,0.3);
-}
+body { display:flex; min-height:100vh; margin:0; font-family:'Segoe UI',sans-serif; background:#f4f6f9; color:#333; }
+.sidebar { width:230px; background:#004383; color:#fff; display:flex; flex-direction:column; padding:25px 20px; box-shadow:3px 0 10px rgba(0,0,0,0.3);}
 .sidebar h4 { font-weight:700; font-size:1.2em; text-align:center; color:#ffb300; margin-bottom:15px; }
 .sidebar hr { border:none; height:2px; background: rgba(255,255,255,0.3); margin:10px 0 20px; }
 .sidebar a { color:#fff; text-decoration:none; display:block; padding:12px 15px; margin-bottom:8px; border-radius:8px; font-weight:500; transition: all 0.3s ease;}
@@ -143,6 +133,10 @@ form button:hover { background:#0059a0; color:#fff; }
                     <tr>
                         <th>Materia</th>
                         <th>Semestre</th>
+                        <th>Zona</th>
+                        <th>Fase 1</th>
+                        <th>Fase 2</th>
+                        <th>Fase Final</th>
                         <th>Nota Final</th>
                         <th>Observaciones</th>
                     </tr>
@@ -152,6 +146,10 @@ form button:hover { background:#0059a0; color:#fff; }
                         <tr>
                             <td><?= htmlspecialchars($n['materia']) ?></td>
                             <td><?= htmlspecialchars($n['semestre']) ?></td>
+                            <td><?= htmlspecialchars($n['zona']) ?></td>
+                            <td><?= htmlspecialchars($n['fase_1']) ?></td>
+                            <td><?= htmlspecialchars($n['fase_2']) ?></td>
+                            <td><?= htmlspecialchars($n['fase_final']) ?></td>
                             <td><?= htmlspecialchars($n['nota_final']) ?></td>
                             <td><?= htmlspecialchars($n['observaciones']) ?></td>
                         </tr>
@@ -167,3 +165,4 @@ form button:hover { background:#0059a0; color:#fff; }
 
 </body>
 </html>
+
