@@ -138,7 +138,7 @@ main {
 /* Tarjetas del panel */
 .card {
     background: linear-gradient(135deg, #06227e, #1a3cbf);
-    padding: 25px;
+    padding: 30px 25px;
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     text-align: center;
