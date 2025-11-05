@@ -1,1 +1,0 @@
-# Notas1practicas
