@@ -57,39 +57,30 @@ $resultado = $conexion->query("SELECT e.*, c.nombre AS carrera FROM estudiantes 
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Estudiantes</title>
+<title>Gestionar Estudiantes</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{
-    font-family:'Segoe UI',sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-    color:#fff;
-    display:flex;
-}
+body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
 
 /* Sidebar */
 nav{
     width:240px;
-    background: rgba(20,20,30,0.95);
+    background:#004383;
     height:100vh;
     padding-top:60px;
     position:fixed;
-    left:0;
-    box-shadow:2px 0 15px rgba(0,0,0,0.5);
 }
 nav a{
     display:block;
     padding:15px 25px;
     color:#fff;
     text-decoration:none;
-    font-weight:500;
-    transition: all 0.3s;
     border-left:4px solid transparent;
+    transition:0.3s;
 }
 nav a:hover{
-    background:linear-gradient(90deg,#1a2a6c,#02cdfa6f);
-    transform:translateX(5px);
-    border-left:4px solid #fff;
+    background:#272727;
+    border-left:4px solid #e06d09da;
 }
 
 /* Header */
@@ -99,11 +90,10 @@ header{
     top:0;
     width:calc(100% - 240px);
     padding:20px;
-    background: linear-gradient(90deg,#1a2a6c,#0086ecff);
+    background:#004383;
     font-size:1.8em;
     font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
-    z-index:10;
+    box-shadow:0 4px 10px rgba(0, 0, 0, 1);
 }
 
 /* Main */
@@ -116,70 +106,35 @@ main{
 
 /* Card */
 .card{
-    background: rgba(255,255,255,0.05);
+    background:#004383;
     padding:25px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-    margin-bottom:30px;
+    border-radius:12px;
+    margin-bottom:20px;
 }
 .card h2{
     margin-bottom:15px;
-    font-size:1.4em;
-    color:#00eaff;
+    color:#fff;
 }
 
 /* Form */
-form{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
-}
-form input, form select, form button{
-    padding:8px;
-    border-radius:8px;
-    border:none;
-    outline:none;
-}
-form input, form select{
-    flex:1;
-    background: rgba(255,255,255,0.1);
-    color:#fff;
-}
-form button{
-    background:#0086ec;
-    color:#fff;
-    cursor:pointer;
-    transition: background 0.3s;
-}
+form{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+form input, form select, form button{padding:8px;border-radius:8px;border:none;outline:none;}
+form input, form select{flex:1;background:#333;color:#fff;}
+form button{background:#1a73e8;color:#fff;cursor:pointer;transition:0.3s;}
 form button:hover{background:#00bfff;}
 
 /* Tabla */
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    background: rgba(255,255,255,0.05);
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-}
+table{width:100%;border-collapse:collapse;margin-top:20px;background:#222;border-radius:12px;overflow:hidden;}
 th,td{padding:12px;text-align:left;}
-th{background-color: rgba(0,234,255,0.8);color:#000;}
-tr:nth-child(even){background: rgba(255,255,255,0.05);}
-td a{
-    text-decoration:none;
-    padding:6px 12px;
-    border-radius:6px;
-    margin-right:5px;
-    font-size:0.9em;
-    color:#fff;
-}
+th{background:#fff;color:#000;}
+tr:nth-child(even){background:#333;}
+td a{text-decoration:none;padding:6px 12px;border-radius:6px;margin-right:5px;font-size:0.9em;color:#fff;}
 td a.edit{background:#27ae60;}
 td a.edit:hover{background:#1e8449;}
 td a.delete{background:#e74c3c;}
 td a.delete:hover{background:#c0392b;}
 </style>
+
 </head>
 <body>
 <nav>

@@ -51,15 +51,15 @@ $resultado = $conexion->query("SELECT * FROM administradores");
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Administradores</title>
+<title>Gestionar Administradores</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Segoe UI',sans-serif;background:#121212;color:#fff;display:flex;}
+body{font-family:'Segoe UI',sans-serif;background:#fff;color:#fff;display:flex;}
 
 /* Sidebar */
 nav{
     width:240px;
-    background:#1c1c1c;
+    background:#004383;
     height:100vh;
     padding-top:60px;
     position:fixed;
@@ -74,7 +74,7 @@ nav a{
 }
 nav a:hover{
     background:#272727;
-    border-left:4px solid #00bfff;
+    border-left:4px solid #e06d09da;
 }
 
 /* Header */
@@ -84,10 +84,10 @@ header{
     top:0;
     width:calc(100% - 240px);
     padding:20px;
-    background:#1a73e8;
+    background:#004383;
     font-size:1.8em;
     font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    box-shadow:0 4px 10px rgba(0, 0, 0, 1);
 }
 
 /* Main */
@@ -100,14 +100,14 @@ main{
 
 /* Card */
 .card{
-    background: #222;
+    background:#004383;
     padding:25px;
     border-radius:12px;
     margin-bottom:20px;
 }
 .card h2{
     margin-bottom:15px;
-    color:#00eaff;
+    color:#fff;
 }
 
 /* Form */
@@ -120,8 +120,8 @@ form button:hover{background:#00bfff;}
 /* Tabla */
 table{width:100%;border-collapse:collapse;margin-top:20px;background:#222;border-radius:12px;overflow:hidden;}
 th,td{padding:12px;text-align:left;}
-th{background:#00eaff;color:#000;}
-tr:nth-child(even){background:#2a2a2a;}
+th{background:#fff;color:#000;}
+tr:nth-child(even){background;}
 td a{
     text-decoration:none;padding:6px 12px;border-radius:6px;margin-right:5px;font-size:0.9em;color:#fff;
 }
@@ -137,7 +137,7 @@ td a.delete:hover{background:#c0392b;}
     <a href="login.php">Cerrar sesión</a>
 </nav>
 
-<header>Dashboard Administradores</header>
+<header>Gestionar Administradores</header>
 
 <main>
     <div class="card">

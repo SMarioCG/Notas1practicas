@@ -1,244 +1,224 @@
 <?php
+session_start();
 include("conexion.php");
 
-// Crear
-if(isset($_POST['guardar'])){
-    $id_estudiante = $_POST['id_estudiante'] ?? null;
-    $id_curso = $_POST['id_curso'] ?? null;
-    $fecha = $_POST['fecha_inscripcion'] ?? date('Y-m-d');
-
-    if($id_estudiante && $id_curso){
-        $sql = "INSERT INTO inscripciones (id_estudiante, id_curso, fecha_inscripcion) 
-                VALUES ('$id_estudiante','$id_curso','$fecha')";
-        $conexion->query($sql);
-        header("Location: inscripciones.php");
-        exit;
-    } else {
-        echo "Seleccione estudiante y curso.";
-    }
-}
-
-// Actualizar
-if(isset($_POST['actualizar'])){
-    $id = $_POST['id'] ?? null;
-    $id_estudiante = $_POST['id_estudiante'] ?? null;
-    $id_curso = $_POST['id_curso'] ?? null;
-    $fecha = $_POST['fecha_inscripcion'] ?? date('Y-m-d');
-
-    if($id && $id_estudiante && $id_curso){
-        $sql = "UPDATE inscripciones 
-                SET id_estudiante='$id_estudiante', id_curso='$id_curso', fecha_inscripcion='$fecha' 
-                WHERE id=$id";
-        $conexion->query($sql);
-        header("Location: inscripciones.php");
-        exit;
-    } else {
-        echo "Faltan datos para actualizar.";
-    }
-}
-
-// Eliminar
-if(isset($_GET['eliminar'])){
-    $id = $_GET['eliminar'];
-    $conexion->query("DELETE FROM inscripciones WHERE id=$id");
-    header("Location: inscripciones.php");
+// Verificar sesión activa
+if (!isset($_SESSION['id']) || $_SESSION['rol'] !== 'Estudiante') {
+    header("Location: login.php");
     exit;
 }
 
-// Editar
-if(isset($_GET['editar'])){
-    $id = $_GET['editar'];
-    $editar = $conexion->query("SELECT * FROM inscripciones WHERE id=$id")->fetch_assoc();
+$estudiante_id = $_SESSION['id']; // ID del estudiante logueado
+$nombre_estudiante = $_SESSION['nombre'];
+
+// === GUARDAR ===
+if (isset($_POST['guardar'])) {
+    $id_curso = $_POST['id_curso'];
+    $fecha = $_POST['fecha_inscripcion'];
+
+    // Evitar duplicados
+    $verificar = $conexion->query("SELECT * FROM inscripciones WHERE id_estudiante='$estudiante_id' AND id_curso='$id_curso'");
+    if ($verificar->num_rows > 0) {
+        echo "<script>alert('⚠️ Ya estás inscrito en este curso');</script>";
+    } else {
+        $sql = "INSERT INTO inscripciones (id_estudiante, id_curso, fecha_inscripcion) 
+                VALUES ('$estudiante_id', '$id_curso', '$fecha')";
+        if ($conexion->query($sql)) {
+            echo "<script>alert('✅ Inscripción guardada correctamente'); window.location='inscripciones.php';</script>";
+        } else {
+            echo "<script>alert('❌ Error al guardar la inscripción');</script>";
+        }
+    }
 }
 
-// Consultar
-$resultado = $conexion->query("SELECT i.*, e.nombre AS estudiante, c.semestre, m.nombre AS materia, CONCAT(ca.nombre,' ',ca.apellido) AS catedratico
-                               FROM inscripciones i
-                               LEFT JOIN estudiantes e ON i.id_estudiante=e.id
-                               LEFT JOIN cursos c ON i.id_curso=c.id
-                               LEFT JOIN materias m ON c.id_materia=m.id
-                               LEFT JOIN catedraticos ca ON c.id_catedratico=ca.id");
+// === ELIMINAR ===
+if (isset($_GET['eliminar'])) {
+    $id = $_GET['eliminar'];
+    $conexion->query("DELETE FROM inscripciones WHERE id='$id' AND id_estudiante='$estudiante_id'");
+    echo "<script>alert('🗑️ Inscripción eliminada'); window.location='inscripciones.php';</script>";
+}
+
+// === CONSULTA PRINCIPAL ===
+$stmt = $conexion->prepare("
+    SELECT i.id, i.fecha_inscripcion, 
+           CONCAT(e.nombre,' ',e.apellido) AS estudiante,
+           m.nombre AS materia, 
+           c.semestre, 
+           CONCAT(ca.nombre,' ',ca.apellido) AS catedratico
+    FROM inscripciones i
+    LEFT JOIN estudiantes e ON i.id_estudiante = e.id
+    LEFT JOIN cursos c ON i.id_curso = c.id
+    LEFT JOIN materias m ON c.id_materia = m.id
+    LEFT JOIN catedraticos ca ON c.id_catedratico = ca.id
+    WHERE i.id_estudiante = ?
+    ORDER BY c.semestre, m.nombre
+");
+$stmt->bind_param("i", $estudiante_id);
+$stmt->execute();
+$resultado = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard de Inscripciones</title>
+<title>Mis Inscripciones - <?= htmlspecialchars($nombre_estudiante) ?></title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-* {margin:0; padding:0; box-sizing:border-box;}
 body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-    color:#fff;
-    display:flex;
+    background: #f4f6f9;
+    color: #333;
 }
 
 /* Sidebar */
-nav {
-    width:240px;
-    background: rgba(20,20,30,0.95);
-    height:100vh;
-    padding-top:60px;
-    position:fixed;
-    left:0;
-    box-shadow:2px 0 15px rgba(0,0,0,0.5);
+.sidebar {
+    width: 230px;
+    background: #004383;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 25px 20px;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.3);
 }
-nav a {
-    display:block;
-    padding:15px 25px;
-    color:#fff;
-    text-decoration:none;
-    font-weight:500;
-    transition: all 0.3s;
-    border-left:4px solid transparent;
+.sidebar h4 {
+    font-weight: 700;
+    font-size: 1.2em;
+    text-align: center;
+    color: #ffb300;
+    margin-bottom: 15px;
 }
-nav a:hover {
-    background:linear-gradient(90deg,#1a2a6c,#02cdfa6f);
-    transform:translateX(5px);
-    border-left:4px solid #fff;
+.sidebar hr {
+    border: none;
+    height: 2px;
+    background: rgba(255,255,255,0.3);
+    margin: 10px 0 20px 0;
 }
-
-/* Header */
-header {
-    position:fixed;
-    left:240px;
-    top:0;
-    width:calc(100% - 240px);
-    padding:20px;
-    background: linear-gradient(90deg,#1a2a6c,#0086ecff);
-    font-size:1.8em;
-    font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.3);
-    z-index:10;
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
 }
-
-/* Main */
-main {
-    margin-left:240px;
-    margin-top:80px;
-    padding:30px;
-    flex:1;
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffb300;
+    transform: translateX(4px);
 }
 
-/* Card */
+/* Contenido */
+.content {
+    flex: 1;
+    padding: 40px;
+}
+.content h2 {
+    color: #004383;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
 .card {
-    background: rgba(255,255,255,0.05);
-    padding:25px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-    margin-bottom:30px;
-}
-.card h2 {
-    margin-bottom:15px;
-    font-size:1.4em;
-    color:#00eaff;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 25px;
+    margin-bottom: 30px;
 }
 
 /* Formulario */
 form {
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    align-items:center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
 }
-form input, form select, form button {
-    padding:8px;
-    border-radius:8px;
-    border:none;
-    outline:none;
+form select, form input, form button {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
-form input, form select {
-    flex:1;
-    background: rgba(255,255,255,0.1);
-    color:#fff;
+form select, form input {
+    flex: 1;
+    background: #f0f2f5;
+    color: #004383;
+    font-weight: 500;
 }
 form button {
-    background:#0086ec;
-    color:#fff;
-    cursor:pointer;
-    transition: background 0.3s;
+    background: #004383;
+    color: #ffb300;
+    font-weight: 600;
+    cursor: pointer;
 }
-form button:hover {background:#00bfff;}
+form button:hover {
+    background: #0059a0;
+    color: #fff;
+}
 
 /* Tabla */
-table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:20px;
-    background: rgba(255,255,255,0.05);
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,0.4);
-}
-th,td {padding:12px;text-align:left;}
-th {background-color: rgba(0,234,255,0.8);color:#000;}
-tr:nth-child(even){background: rgba(255,255,255,0.05);}
+.table thead { background: #004383; color: #ffb300; }
+.table tbody tr:hover { background-color: rgba(0,67,131,0.05); }
+.table td, .table th { text-align: center; padding: 12px; }
+
+/* Botones acción */
 td a {
-    text-decoration:none;
-    padding:6px 12px;
-    border-radius:6px;
-    margin-right:5px;
-    font-size:0.9em;
-    color:#fff;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    margin-right: 5px;
+    font-size: 0.9em;
 }
-td a.edit {background:#27ae60;}
-td a.edit:hover {background:#1e8449;}
-td a.delete {background:#e74c3c;}
+td a.delete {background:#e74c3c; color:white;}
 td a.delete:hover {background:#c0392b;}
 </style>
 </head>
 <body>
-<nav>
-    <a href="panel_admin.php">Volver a Panel Principal</a>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h4>Mis Inscripciones</h4>
+    <hr>
+    <a href="panel_estudiante.php"> Panel Principal</a>
     <a href="login.php">Cerrar Sesión</a>
-</nav>
+</div>
 
-<header>Dashboard de Inscripciones</header>
+<!-- Contenido -->
+<div class="content">
+    <h2>📋 Bienvenido, <?= htmlspecialchars($nombre_estudiante) ?></h2>
 
-<main>
+    <!-- Formulario -->
     <div class="card">
-        <h2>➕ <?= isset($editar)? "Editar Inscripción" : "Agregar Inscripción" ?></h2>
+        <h4>➕ Nueva Inscripción</h4>
         <form method="post">
-            <input type="hidden" name="id" value="<?= isset($editar)?$editar['id']:'' ?>">
-
-            <select name="id_estudiante" required>
-                <option value="">--Seleccionar Estudiante--</option>
-                <?php
-                $estudiantes = $conexion->query("SELECT * FROM estudiantes");
-                while($fila = $estudiantes->fetch_assoc()):
-                ?>
-                    <option value="<?= $fila['id'] ?>" <?= isset($editar) && $editar['id_estudiante']==$fila['id']?'selected':'' ?>>
-                        <?= $fila['nombre'].' '.$fila['apellido'] ?>
-                    </option>
-                <?php endwhile; ?>
-            </select>
-
             <select name="id_curso" required>
                 <option value="">--Seleccionar Curso--</option>
                 <?php
-                $cursos = $conexion->query("SELECT cu.id, m.nombre AS materia, CONCAT(ca.nombre,' ',ca.apellido) AS catedratico FROM cursos cu
-                                            LEFT JOIN materias m ON cu.id_materia=m.id
-                                            LEFT JOIN catedraticos ca ON cu.id_catedratico=ca.id");
+                $cursos = $conexion->query("
+                    SELECT cu.id, m.nombre AS materia, CONCAT(ca.nombre,' ',ca.apellido) AS catedratico 
+                    FROM cursos cu
+                    LEFT JOIN materias m ON cu.id_materia=m.id
+                    LEFT JOIN catedraticos ca ON cu.id_catedratico=ca.id
+                ");
                 while($fila = $cursos->fetch_assoc()):
                 ?>
-                    <option value="<?= $fila['id'] ?>" <?= isset($editar) && $editar['id_curso']==$fila['id']?'selected':'' ?>>
+                    <option value="<?= $fila['id'] ?>">
                         <?= $fila['materia'].' - '.$fila['catedratico'] ?>
                     </option>
                 <?php endwhile; ?>
             </select>
 
-            <input type="date" name="fecha_inscripcion" value="<?= isset($editar)?$editar['fecha_inscripcion']:date('Y-m-d') ?>">
-
-            <button type="submit" name="<?= isset($editar)?'actualizar':'guardar' ?>">
-                <?= isset($editar)?'Actualizar':'Guardar' ?>
-            </button>
+            <input type="date" name="fecha_inscripcion" value="<?= date('Y-m-d') ?>">
+            <button type="submit" name="guardar">Guardar</button>
         </form>
     </div>
 
-    <div class="card">
-        <h2>📋 Lista de Inscripciones</h2>
-        <table>
+    <!-- Tabla de inscripciones -->
+    <table class="table">
+        <thead>
             <tr>
                 <th>ID</th>
                 <th>Estudiante</th>
@@ -248,22 +228,25 @@ td a.delete:hover {background:#c0392b;}
                 <th>Fecha</th>
                 <th>Acciones</th>
             </tr>
+        </thead>
+        <tbody>
             <?php while($fila = $resultado->fetch_assoc()): ?>
             <tr>
                 <td><?= $fila['id'] ?></td>
-                <td><?= $fila['estudiante'] ?></td>
-                <td><?= $fila['materia'] ?></td>
-                <td><?= $fila['catedratico'] ?></td>
-                <td><?= $fila['semestre'] ?></td>
-                <td><?= $fila['fecha_inscripcion'] ?></td>
+                <td><?= htmlspecialchars($fila['estudiante']) ?></td>
+                <td><?= htmlspecialchars($fila['materia']) ?></td>
+                <td><?= htmlspecialchars($fila['catedratico']) ?></td>
+                <td><?= htmlspecialchars($fila['semestre']) ?></td>
+                <td><?= htmlspecialchars($fila['fecha_inscripcion']) ?></td>
                 <td>
-                    <a href="?editar=<?= $fila['id'] ?>" class="edit">Editar</a>
-                    <a href="?eliminar=<?= $fila['id'] ?>" class="delete" onclick="return confirm('¿Eliminar inscripción?')">Eliminar</a>
+                    <a href="inscripciones.php?eliminar=<?= $fila['id'] ?>" class="delete" onclick="return confirm('¿Seguro que deseas eliminar esta inscripción?')">Eliminar</a>
                 </td>
             </tr>
             <?php endwhile; ?>
-        </table>
-    </div>
-</main>
+        </tbody>
+    </table>
+</div>
+
 </body>
 </html>
+
